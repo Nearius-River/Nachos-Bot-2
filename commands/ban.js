@@ -1,0 +1,63 @@
+const Discord = require('discord.js');
+
+exports.run = (bot, message, args, settings) => {
+    let toBan = message.mentions.members.first() || message.guild.members.find(u => u.user.id === args[0]) || message.guild.members.find(u => u.user.username === args[0]) || message.guild.members.find(u => `${u.user.username}#${u.user.discriminator}` === args[0]);
+    if(!toBan) return message.channel.send('Não foi possível encontrar o usuário!');
+    if(toBan.id === "547967082952785933") return message.channel.send("Você tenta banir o bot! É ineficaz!");
+    if(toBan.id === "303235142283952128") return message.channel.send("Você não pode; ele é forte demais para você.");
+    let banReason = args.slice(1).join(' ');
+    if(!message.member.hasPermission("MANAGE_GUILD")) return message.channel.send("Uhh você precisa ter permissão administrativa ou gerenciar servidor.");
+    if(toBan.hasPermission("MANAGE_GUILD")) return message.channel.send("Uhh essa pessoa não pode ser banida.");
+    if(!banReason) banReason = "Não especificado";
+
+    let banEmbed = new Discord.RichEmbed()
+    .setTitle('Ação | Ban')
+    .setColor('faff2b')
+    .addField('Usuário banido', `${toBan} | ${toBan.id}`)
+    .addField('Banido por', `<@${message.author.id}> | ${message.author.id}`)
+    .addField('Motivo', banReason)
+    .setTimestamp();
+
+    const filter = (reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id == message.author.id;
+
+    message.channel.send('Tem certeza de que quer banir esse usuário? (15 segundos)').then(async msg => {
+
+        await msg.react('✅');
+        await msg.react('❌');
+
+        msg.awaitReactions(filter, {
+            max: 1,
+            time: 15000,
+            errors: ['time']
+        }).then(collected => {
+            const reaction = collected.first();
+            switch (reaction.emoji.name) {
+                case '✅':
+                    toBan.kick(banReason);
+                    msg.clearReactions();
+                    msg.edit('Usuário banido.').then(m => m.delete(5000));
+                    break;
+                case '❌':
+                    msg.clearReactions();
+                    msg.edit(`Certo. Não irei banir ${toBan.username}.`).then(m => m.delete(5000));
+                    break;
+            }
+        }).catch(e => {
+            msg.clearReactions();
+            msg.edit('Comando cancelado :/').then(m => m.delete(5000));
+        });
+    });
+
+    let banChannel = message.guild.channels.find(c => c.id == settings.logsChannel);
+    banChannel.send(banEmbed);
+};
+
+exports.help = {
+    name: "ban",
+    aliases: ['banir', 'b'],
+    categoria: 'Moderação',
+    descrição: "Bane um usuário do servidor.",
+    uso: "ban <usuário> [motivo] | ban Near porque eu quis",
+    permissões: "Gerenciar servidor",
+    disabled: false
+};
