@@ -29,6 +29,7 @@ module.exports = bot => {
     //<----------------//
     //: Guild Profile ://
     //---------------->//
+    bot.config = require('../config');
     bot.getGuild = async guild => {
         let data = await Guild.findOne({ guildID: guild.id });
         if (data) return data;
