@@ -42,5 +42,5 @@ exports.help = {
     descrição: "Checa o placar de magnatas.",
     uso: "topmoney",
     permissões: "Nenhuma",
-    disabled: false
+    disabled: true
 };

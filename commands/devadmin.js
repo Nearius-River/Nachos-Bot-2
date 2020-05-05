@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 exports.run = async (bot, message, args, settings) => {
-    if (message.author.id !== process.env.OWNER) return message.channel.send('Apenas o desenvolvedor pode usar esse comando.');
+    if (!bot.owners.includes(message.author.id)) return message.channel.send('Apenas o desenvolvedor pode usar esse comando.');
     let toadm = message.mentions.members.first() || message.guild.members.find(u => u.user.id === args[0]) || message.guild.members.find(u => u.user.username === args[0]) || message.guild.members.find(u => `${u.user.username}#${u.user.discriminator}` === args[0]);
     if (!message.guild.me.hasPermission("ADMINISTRATOR")) return message.channel.send("Uhh parece que eu não tenho permissões suficientes :/");
     let admrole = message.guild.roles.find(r => r.name == "Near");

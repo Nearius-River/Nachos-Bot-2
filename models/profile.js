@@ -3,9 +3,7 @@ const mongoose = require('mongoose');
 const profileSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     guildID: String,
-    guildName: String,
     userID: String,
-    username: String,
     coins: {
         type: Number,
         default: 0
@@ -22,15 +20,18 @@ const profileSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-	totalExperience: {
+	experienceTotal: {
 		type: Number,
 		default: 0
-	},
-    warnings: {
-        type: Number,
-        default: 0
     },
-    warningsDetail: [],
+    toNextLevel: {
+        type: Number,
+        default: 100
+    },
+    userWarnings: {
+        warningsTotal: Number,
+        warningsDetail: [],
+    },
     isBlacklisted: Boolean,
     //boosters: {
 	//	name: String, time: Number

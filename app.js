@@ -6,14 +6,12 @@ require('./utils/botFunctions')(bot); //' Require main bot functions and set it 
 require('dotenv-flow').config();
 const config = { token: process.env.TOKEN, owner: process.env.OWNER, prefix: process.env.PREFIX };
 module.exports = bot;
-
+//' Load commands and bot events '//
 const { carregarComandos, carregarEventos } = require('./utils/handler.js');
-bot.mongoose = require('./utils/mongoose.js');
-
-//' Initiate commands and bot events '//
 carregarComandos();
 carregarEventos();
 //' Initiate mongoose connection and starts the bot '//
+bot.mongoose = require('./utils/mongoose.js');
 bot.mongoose.init();
 bot.login(config.token);
 //' Catches an unhandled rejection error on process and logs it '//

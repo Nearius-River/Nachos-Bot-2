@@ -1,7 +1,7 @@
 exports.run = async (bot, message, args) => {
+    if (!bot.owners.includes(message.author.id)) return message.channel.send('Opa, esse comando é só para desenvolvedores. Foi mal!');
     const user = message.mentions.members.first() || message.guild.members.get(args[0]) || bot.members.get(args[0]);
     if (!user) return;
-    if (bot.getProfile(user).isDeveloper != true) return message.channel.send('Opa, esse comando é só para desenvolvedores. Foi mal!');
 
     let Reactions = ['👋','✌️','😐'];
     const Filter = (Reaction, user) => Reactions.includes(Reaction.emoji.name) && user.id == message.author.id;

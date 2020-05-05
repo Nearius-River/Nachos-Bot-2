@@ -12,9 +12,9 @@ exports.run = async (bot, message, args, settings) => {
 
     Profile.findOne({userID: user.id}, async (err, result) => {
         if (err) console.error(err);
-        if (result.warnings == 0) return message.channel.send('Esse usuário não tem nenhum aviso.');
-        if (result.warnings < 2) return message.channel.send(`\`\`\`\n${user.user.tag} | ${user.user.id} | ${result.warnings.toString()} aviso\n${result.warningsDetail.join('\n')}\n\`\`\``);
-        message.channel.send(`\`\`\`\n${user.user.tag} | ${user.user.id} | ${result.warnings.toString()} avisos\n${result.warningsDetail.join('\n')}\n\`\`\``);
+        if (result.userWarnings.warningsTotal == 0) return message.channel.send('Esse usuário não tem nenhum aviso.');
+        if (result.userWarnings.warningsTotal < 2) return message.channel.send(`\`\`\`\n${user.user.tag} | ${user.user.id} | ${result.userWarnings.warningsTotal.toString()} aviso\n${result.userWarnings.warningsDetail.join('\n')}\n\`\`\``);
+        message.channel.send(`\`\`\`\n${user.user.tag} | ${user.user.id} | ${result.userWarnings.warningsTotal.toString()} avisos\n${result.userWarnings.warningsDetail.join('\n')}\n\`\`\``);
     });
 };
 

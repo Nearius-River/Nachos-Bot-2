@@ -5,8 +5,8 @@ module.exports = async (bot, message) => {
 	let settings;
     try {
         settings = await bot.getGuild(message.guild);
-    } catch (error) {
-        console.error(error);
+    } catch (e) {
+        console.error(e);
     } //' Main bot settings for guild (prefix, log channel etc) '//
 
     const prefix = settings.prefix;
@@ -14,10 +14,11 @@ module.exports = async (bot, message) => {
     const newProfile = {
         guildID: message.member.guild.id,
         userID: message.author.id,
-        username: message.author.tag,
+        userWarnings: {
+            warningsTotal: 0,
+            warningsDetail: [],
+        },
         isBlacklisted: false,
-        isDeveloper: false,
-        isOwner: false
     };
 
     const userProfile = await bot.getProfile(message.author); //' var = require('../models/profile') '//
@@ -26,19 +27,6 @@ module.exports = async (bot, message) => {
     bot.owners = ['303235142283952128','630456490540400703','693676638373937182']; //' Setting bot owners '//
     bot.mainServer = bot.guilds.get('538548215914561537'); //' Development server '//
     bot.mainLogChannel = bot.mainServer.channels.get('686761678247165955'); //' Channel for bot-related logs '//
-
-    if (message.content.startsWith(`<@!${bot.user.id}>`)) return message.channel.send(`Querendo ajuda? meu prefixo nesse servidor é \`${prefix}\`.\nCaso queira ver uma lista de comandos, digite \`${prefix}comandos\` ou \`${prefix}cmds\`.`); //' Make the bot reply with useful info if message starts with bot mention '//
-
-    const messageCheck = Math.floor(Math.random() * 10) + 1;
-    const amount = Math.floor(Math.random() * 4) + 1;
-
-    if (messageCheck >= 2 && messageCheck <= 5) {
-        try {
-            await bot.updateCoins(bot, message.member, amount);
-        } catch (e) {
-            console.error(`PERFIL > USUÁRIO | Ocorreu um erro ao tentar atualizar os valores de "${message.author.id}".\n`.error + `${e}`.warn);
-        }
-    } //' If messageCheck is equals or greater than 2 and equals or less than 5, call function #updateCoins '//
 
     if (message.content.indexOf(settings.prefix) !== 0) return; //' If message don't starts with the prefix, return nothing '//
     let args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
@@ -57,12 +45,17 @@ module.exports = async (bot, message) => {
     } catch (e) {
         return;
     }
-    //' Function for updating coins/experience '//
-    // async function updateCoins(bot, member, amount) {
-    //     const profile = await bot.getProfile(member); ////////////////////////' #botFunctions :getProfile '/////
-    //     const newAmount = profile ? profile.coins + amount : amount; /////////' User coins value '//////////////
-    //     const newAmountXP = profile ? profile.experience + amount : amount; //' User experience value '/////////
-    //     await bot.updateProfile(member, { coins: newAmount }); ///////////////' #botFunctions :updateProfile '//
-    //     await bot.updateProfile(member, { experience: newAmountXP + 2 }); ////' ---------------------------- '//
-    // }
+
+    if (message.content.startsWith(`<@!${bot.user.id}>`)) return message.channel.send(`Querendo ajuda? meu prefixo nesse servidor é \`${prefix}\`.\nCaso queira ver uma lista de comandos, digite \`${prefix}comandos\` ou \`${prefix}cmds\`.`); //' Make the bot reply with useful info if message starts with bot mention '//
+
+    const messageCheck = Math.floor(Math.random() * 10) + 1;
+    const amount = Math.floor(Math.random() * 4) + 1;
+
+    if (messageCheck >= 2 && messageCheck <= 6) {
+        try {
+            await bot.updateCoins(bot, message.member, amount);
+        } catch (e) {
+            console.error(`PERFIL > USUÁRIO | Ocorreu um erro ao tentar atualizar os valores de "${message.author.id}".\n`.error + `${e}`.warn);
+        }
+    } //' If messageCheck is equals or greater than 2 and equals or less than 3, call function #updateCoins '//
 };

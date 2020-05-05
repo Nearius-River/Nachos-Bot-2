@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 exports.run = async (bot, message, args) => {
-    if (!bot.isOwner(message.author)) return message.channel.send('Uhh apenas o desenvolvedor pode usar esse comando.');
+    if (!bot.owners.includes(message.author.id)) return message.channel.send('Uhh apenas o desenvolvedor pode usar esse comando.');
     let embed = new Discord.RichEmbed()
     .setColor('#36393F');
 

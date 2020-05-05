@@ -2,7 +2,7 @@
 // const { Guild, Profile } = require('../models');
 
 exports.run = async (bot, message, args, settings) => {
-    //Profile.deleteMany({ warnings: 0 }).then(console.log('deletados.'));
+    //Profile.deleteMany({ userWarnings: 0 }).then(console.log('deletados.'));
     return message.channel.send('Comando vazio!');
 };
 

@@ -3,7 +3,7 @@ const moment = require('moment');
 moment.locale('pt-br');
 
 exports.run = (bot, message, args) => {
-  // if (message.author.id !== process.env.OWNER) return message.channel.send("Somente o desenvolvedor pode usar esse comando.");
+  if (!bot.owners.includes(message.author.id)) return message.channel.send("Somente o desenvolvedor pode usar esse comando.");
   let replies = ["Flws ae pra quem fica", "Sayonara", "Hora de dormir", "Até a próxima", "Vejo você no outro mundo", "Te vejo em breve", "Bye bye", "Até um outro dia", "Hasta luego", "Ninguém nunca vai ver essa mensagem secreta que eu coloquei no bot mas caso alguém veja: 3^3", "Finalmente um descanso", "Posso dormir agora?"];
   let result = Math.floor((Math.random() * replies.length));
   let Count = 0;

@@ -45,7 +45,7 @@ module.exports = bot => {
             else return;
         }
 
-        console.log(`PERFIL > GUILD | Servidor "${data.guildName}" (${data.guildID}) atualizou as configurações: ${Object.keys(settings)}`.new);
+        console.log(`PERFIL > GUILD | Servidor "${data.guildID}" atualizou as configurações: ${Object.keys(settings)}`.updated);
         return await data.updateOne(settings);
     };
 
@@ -54,8 +54,8 @@ module.exports = bot => {
         let merged = Object.assign(defaults, settings);
 
         const newGuild = await new Guild(merged);
-        await bot.updateLog(`Novo perfil de guild criado para ${merged.guildID} \`\`(${merged.guildName})\`\`.`);
-        return newGuild.save().then(console.log(`PERFIL > GUILD | Configurações padrões salvas para "${merged.guildName}" (${merged.guildID})`.new));
+        await bot.updateLog(`Novo perfil de guild criado para \`\`${merged.guildID}\`\`.`);
+        return newGuild.save().then(console.log(`PERFIL > GUILD | Configurações padrões salvas para "${merged.guildID}"`.updated));
     };
 
     bot.deleteGuild = async guild => {
@@ -63,11 +63,11 @@ module.exports = bot => {
         if (typeof(guild) === 'string')  {
             await Guild.deleteOne({ guildID: guild });
             await bot.updateLog(`Uma guild foi excluida da DB. ID: ${guild}`);
-            return console.log(`PERFIL > GUILD | Guild ${guild} excluida da DB com sucesso!`.new);
+            return console.log(`PERFIL > GUILD | Guild ${guild} excluida da DB com sucesso!`.updated);
         } else {
             await Guild.deleteOne({ guildID: guild.id });
             await bot.updateLog(`Uma guild foi excluida da DB. ID: ${guild.id}`);
-            return console.log(`PERFIL > GUILD | Guild ${guild.id} excluida da DB com sucesso!`.new);
+            return console.log(`PERFIL > GUILD | Guild ${guild.id} excluida da DB com sucesso!`.updated);
         }
     };
     //<---------------//
@@ -77,8 +77,8 @@ module.exports = bot => {
         const merged = Object.assign({ _id: mongoose.Types.ObjectId() }, profile);
 
         const newProfile = await new Profile(merged);
-        bot.updateLog(`Novo perfil de usuário criado para ${merged.userID} (${merged.username}). Guild: ${merged.guildID}`);
-        return newProfile.save().then(console.log(`PERFIL > USUÁRIO | Novo perfil salvo para "${merged.username}" \`\`(${merged.userID})\`\` na guild \`\`${merged.guildID}\`\``.updated));
+        bot.updateLog(`Novo perfil de usuário criado para \`\`${merged.userID}\`\`, na guild \`\`${merged.guildID}\`\``);
+        return newProfile.save().then(console.log(`PERFIL > USUÁRIO | Novo perfil salvo para "${merged.userID}", na guild "${merged.guildID}"`.updated));
     };
 
     bot.getProfile = async (user, extraData) => {
@@ -348,7 +348,6 @@ module.exports = bot => {
 
     bot.refreshFunctions = () => {
         delete require.cache[require.resolve(`./botFunctions.js`)];
-        require('./botFunctions.js');
         return messages.success.functionsRestarted;
     };
 

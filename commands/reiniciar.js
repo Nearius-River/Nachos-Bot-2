@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 
 exports.run = async (bot, message, args) => {
-    if (!bot.isOwner(message.author)) return message.channel.send("Somente o desenvolvedor pode usar esse comando.");
+    if (!bot.owners.includes(message.author.id)) return message.channel.send("Somente o desenvolvedor pode usar esse comando.");
     let comando = args[0];
     if (!comando || !bot.commands.has(comando) || comando == 'comandos') {
       fs.readdir('./commands', (err, files) => {
