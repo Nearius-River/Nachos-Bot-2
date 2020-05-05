@@ -1,12 +1,12 @@
 const Discord = require('discord.js');
 
 exports.run = async (bot, message, args, settings) => {
-    if (!message.member.hasPermission('MANAGE_GUILD')) return message.channel.send('Uhh você precisa de permissão administrativa ou gerenciar servidor.');
+    if (!message.member.permissions.has('MANAGE_GUILD')) return message.channel.send('Uhh você precisa de permissão administrativa ou gerenciar servidor.');
 
     const setting = args[0];
     const newSetting = args.slice(1).join(' ');
 
-    const helpEmbed = new Discord.RichEmbed()
+    const helpEmbed = new Discord.MessageEmbed()
     .setColor('#36393F');
 
     switch (setting) {
@@ -60,7 +60,7 @@ exports.run = async (bot, message, args, settings) => {
             if (newSetting) {
                 try {
                     let role = newSetting;
-                    let newRole = message.guild.roles.find(r => r.name === role) || message.guild.roles.find(r => r.id === role);
+                    let newRole = message.guild.roles.cache.find(r => r.name === role) || message.guild.roles.cache.find(r => r.id === role);
                     if (!newRole) return message.channel.send('Não foi possivel encontrar o cargo!');
                     await bot.updateGuild(message.guild, {modRole: newRole.name});
                     return message.channel.send(`Cargo de mod definido para: \`${newRole.name}\``);
@@ -77,7 +77,7 @@ exports.run = async (bot, message, args, settings) => {
             if (newSetting) {
                 try {
                     let role = newSetting;
-                    let newRole = message.guild.roles.find(r => r.name === role) || message.guild.roles.find(r => r.id === role);
+                    let newRole = message.guild.roles.cache.find(r => r.name === role) || message.guild.roles.cache.find(r => r.id === role);
                     if (!newRole) return message.channel.send('Não foi possivel encontrar o cargo!');
                     await bot.updateGuild(message.guild, {adminRole: newRole.name});
                     return message.channel.send(`Cargo de admin definido para: \`${newRole.name}\``);
@@ -94,7 +94,7 @@ exports.run = async (bot, message, args, settings) => {
             if (newSetting) {
                 try {
                     let role = newSetting;
-                    let newRole = message.guild.roles.find(r => r.name === role) || message.guild.roles.find(r => r.id === role);
+                    let newRole = message.guild.roles.cache.find(r => r.name === role) || message.guild.roles.cache.find(r => r.id === role);
                     if (!newRole) return message.channel.send('Não foi possivel encontrar o cargo!');
                     await bot.updateGuild(message.guild, {mutedRole: newRole.name});
                     return message.channel.send(`Cargo de mutes definido para: \`${newRole.name}\``);
@@ -124,7 +124,7 @@ exports.run = async (bot, message, args, settings) => {
                     const reaction = collected.first();
                     switch (reaction.emoji.name) {
                         case '❓':
-                            msg.clearReactions();
+                            msg.reactions.removeAll();
                             helpEmbed.setDescription(`**Ajuda | configurar**
 __Uso:__ configurar <configuração> [nova configuração]
 __Exemplo:__ configurar logs #canal-para-logs
@@ -139,7 +139,7 @@ __Configurações atuais:__ \`prefixo\`, \`logs\`, \`reports\`, \`mod-role\`, \`
                             message.channel.send(helpEmbed);
                             break;
                         case '❌':
-                            msg.clearReactions();
+                            msg.reactions.removeAll();
                             try {
                                 await bot.updateGuild(message.guild, { prefix: '*' });
                                 await bot.updateGuild(message.guild, { logsChannel: 'logs' });
@@ -155,7 +155,7 @@ __Configurações atuais:__ \`prefixo\`, \`logs\`, \`reports\`, \`mod-role\`, \`
                             break;
                     }
                 }).catch(e => {
-                    msg.clearReactions();
+                    msg.reactions.removeAll();
                     msg.edit('Comando fechado.').then(m => m.delete(5000));
                 });
             });

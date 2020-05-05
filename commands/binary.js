@@ -1,4 +1,4 @@
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const binary = require('decode-encode-binary');
 
 exports.run = async (bot, message, args, settings, user, send) => {

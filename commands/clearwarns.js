@@ -1,9 +1,9 @@
 const { Profile } = require('../models');
 
 exports.run = async (bot, message, args, settings) => {
-    if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send('Uhh você precisa de permissão administrativa ou gerenciar mensagens.');
-    const user = message.mentions.members.first() || message.guild.members.get(args[0]);
-    if (user.hasPermission('MANAGE_MESSAGES')) return message.channel.send('Esse usuário não tem nenhum aviso.');
+    if (!message.member.permissions.has('MANAGE_MESSAGES')) return message.channel.send('Uhh você precisa de permissão administrativa ou gerenciar mensagens.');
+    const user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
+    if (user.permissions.has('MANAGE_MESSAGES')) return message.channel.send('Esse usuário não tem nenhum aviso.');
     if (!user) return message.channel.send('Não foi possível encontrar o usuário!');
 
     Profile.findOne({userID: user.id}, async (err, result) => {

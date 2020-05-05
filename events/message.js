@@ -25,13 +25,13 @@ module.exports = async (bot, message) => {
     if (!userProfile) return await bot.createProfile(newProfile);
 
     bot.owners = ['303235142283952128','630456490540400703','693676638373937182']; //' Setting bot owners '//
-    bot.mainServer = bot.guilds.get('538548215914561537'); //' Development server '//
-    bot.mainLogChannel = bot.mainServer.channels.get('686761678247165955'); //' Channel for bot-related logs '//
+    bot.mainServer = bot.guilds.cache.get('538548215914561537'); //' Development server '//
+    bot.mainLogChannel = bot.mainServer.channels.cache.get('686761678247165955'); //' Channel for bot-related logs '//
 
     if (message.content.indexOf(settings.prefix) !== 0) return; //' If message don't starts with the prefix, return nothing '//
     let args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
     let command = args.shift().toLowerCase();
-    //' const user = (message.mentions ? message.mentions.members.first : true) || (message.guild ? message.guild.members.get(args[0]) : true); '//
+    //' const user = (message.mentions ? message.mentions.members.first : true) || (message.guild ? message.guild.members.cache.cache.get(args[0]) : true); '//
     let cmd;
     if (bot.commands.has(command)) {
         cmd = bot.commands.get(command);

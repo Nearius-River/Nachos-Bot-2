@@ -3,7 +3,7 @@ const { Profile } = require('../models');
 
 exports.run = async (bot, message, args, settings) => {
     if (!bot.owners.includes(message.author.id)) return message.channel.send('Apenas o desenvolvedor pode usar esse comando.');
-    let user = message.mentions.members.first() || message.guild.members.find(u => u.user.id === args[0]) || message.guild.members.find(u => u.user.username === args[0]) || message.guild.members.find(u => u.user.tag === args[0]);
+    let user = message.mentions.members.first() || message.guild.members.cache.find(u => u.user.id === args[0]) || message.guild.members.cache.find(u => u.user.username === args[0]) || message.guild.members.cache.find(u => u.user.tag === args[0]);
 
     Profile.findOne({ userID: user.user.id }, async (err, files) => {
         if (err) console.error(err);

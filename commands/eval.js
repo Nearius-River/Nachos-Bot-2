@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 exports.run = async (bot, message, args) => {
     if (!bot.owners.includes(message.author.id)) return message.channel.send('Uhh apenas o desenvolvedor pode usar esse comando.');
-    let embed = new Discord.RichEmbed()
+    let embed = new Discord.MessageEmbed()
     .setColor('#36393F');
 
     const code = args.join(" ");

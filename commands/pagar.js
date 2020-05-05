@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const { Profile } = require('../models');
 
 exports.run = async (bot, message, args, settings) => {
-    let user = message.mentions.users.first() || message.guild.members.find(m => m.id == args[0]);
+    let user = message.mentions.users.first() || message.guild.members.cache.find(m => m.id == args[0]);
     if (!user) return message.channel.send('Não foi possivel encontrar o usuário!');
     let value = args[1];
     if (isNaN(value)) return message.channel.send('Você só pode pagar valores númericos.');

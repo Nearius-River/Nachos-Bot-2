@@ -1,11 +1,11 @@
 const { Profile } = require('../models');
 
 exports.run = async (bot, message, args, settings) => {
-    if (!message.member.hasPermission('MANAGE_MESSAGES')) return message.channel.send('Uhh você precisa de permissão administrativa ou gerenciar mensagens.');
-    const user = message.mentions.members.first() || message.guild.members.get(args[0]);
+    if (!message.member.permissions.has('MANAGE_MESSAGES')) return message.channel.send('Uhh você precisa de permissão administrativa ou gerenciar mensagens.');
+    const user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
     if(user.id === "547967082952785933") return message.channel.send("Zero avisos q-p");
     if(user.id === "303235142283952128") return message.channel.send("Near tem -8000 avisos.");
-    if (user.hasPermission('MANAGE_MESSAGES')) return message.channel.send('Esse usuário não tem nenhum aviso.');
+    if (user.permissions.has('MANAGE_MESSAGES')) return message.channel.send('Esse usuário não tem nenhum aviso.');
     let reason = args.slice(1).join(' ');
     if (!reason) reason = 'Não especificado';
     if (!user) return message.channel.send('Não foi possível encontrar o usuário!');

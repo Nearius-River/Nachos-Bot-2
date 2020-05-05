@@ -2,22 +2,24 @@ const ms = require('ms');
 const Discord = require('discord.js');
 
 exports.run = async (bot, message, args, settings) => {
-    let toMute = message.mentions.members.first() || message.guild.members.find(u => u.user.id === args[0]) || message.guild.members.find(u => u.user.username === args[0]) || message.guild.members.find(u => `${u.user.username}#${u.user.discriminator}` === args[0]);
+    let toMute = message.mentions.members.first() || message.guild.members.cache.find(u => u.user.id === args[0]) || message.guild.members.cache.find(u => u.user.username === args[0]) || message.guild.members.cache.find(u => `${u.user.username}#${u.user.discriminator}` === args[0]);
     if (!toMute) return message.channel.send('Não foi possivel encontrar o usuário!');
     if (toMute.id === "547967082952785933") return message.channel.send("Você tenta mutar o bot! É ineficaz!");
     if (toMute.id === "303235142283952128") return message.channel.send("Você não pode; ele é forte demais para você.");
-    if (!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send("Uhh você precisa de permissão administrativa ou cargo de mod.");
-    if (toMute.hasPermission("MANAGE_MESSAGES") || toMute.roles.find(r => r.name == settings.modRole)) return message.channel.send("Uhh essa pessoa não pode ser mutada.");
-    let muteRole = message.guild.roles.find(r => r.name === settings.mutedRole);
+    if (!message.member.permissions.has("MANAGE_MESSAGES")) return message.channel.send("Uhh você precisa de permissão administrativa ou cargo de mod.");
+    if (toMute.permissions.has("MANAGE_MESSAGES") || toMute.roles.find(r => r.name == settings.modRole)) return message.channel.send("Uhh essa pessoa não pode ser mutada.");
+    let muteRole = message.guild.roles.cache.find(r => r.name === settings.mutedRole);
     if (toMute.roles.find(r => r.name == settings.mutedRole)) return message.channel.send('Esse usuário já está mutado.');
     if (!muteRole) {
         try {
-            muteRole = await message.guild.createRole({
-                name: settings.mutedRole,
-                color: "#000000",
-                permissions: []
+            muteRole = await message.guild.roles.cache.create({
+                data: {
+                    name: settings.mutedRole,
+                    color: "#000000",
+                    permissions: []
+                }
             });
-            message.guild.channels.forEach(async (channel, id) => {
+            message.guild.channels.cache.forEach(async (channel) => {
                 await channel.overwritePermissions(muteRole, {
                   SEND_MESSAGES: false,
                   ADD_REACTIONS: false
@@ -35,18 +37,18 @@ exports.run = async (bot, message, args, settings) => {
     let muteReason = args.slice(2).join(" ");
     if( !muteReason) muteReason = "Não especificado";
 
-    await (toMute.addRole(muteRole.id));
+    await (toMute.roles.add(muteRole.id));
     message.channel.send(`<@${toMute.id}> foi mutado por ${ms(ms(muteTime))}.`);
-    let muteChannel = message.guild.channels.find(c => c.id == settings.logsChannel);
+    let muteChannel = message.guild.channels.cache.find(c => c.id == settings.logsChannel);
     if (!muteChannel) return;
-    let autoMod = new Discord.RichEmbed().setTitle("Ação | Unmute").setColor("#317ee0").addField("Usuário desmutado", `${toMute} | ${toMute.id}`).addField("Desmutado por", bot.user.tag);
+    let autoMod = new Discord.MessageEmbed().setTitle("Ação | Unmute").setColor("#317ee0").addField("Usuário desmutado", `${toMute} | ${toMute.id}`).addField("Desmutado por", bot.user.tag);
 
     setTimeout(function() {
-        toMute.removeRole(muteRole.id);
+        toMute.roles.remove(muteRole.id);
         muteChannel.send(autoMod);
     }, ms(muteTime));
 
-    let muteEmbed = new Discord.RichEmbed().setTitle(`Ação | Mute`).setColor("#faff2b").addField("Usuário mutado", `${toMute} | ${toMute.id}`).addField("Mutado por", `<@${message.author.id}> | ${message.author.id}`).addField("Tempo do mute", `${ms(ms(muteTime))}`).addField("Motivo", `${muteReason}`).setTimestamp();
+    let muteEmbed = new Discord.MessageEmbed().setTitle(`Ação | Mute`).setColor("#faff2b").addField("Usuário mutado", `${toMute} | ${toMute.id}`).addField("Mutado por", `<@${message.author.id}> | ${message.author.id}`).addField("Tempo do mute", `${ms(ms(muteTime))}`).addField("Motivo", `${muteReason}`).setTimestamp();
     muteChannel.send(muteEmbed);
 
 };

@@ -199,12 +199,12 @@ module.exports = bot => {
                 return messages.success.logEdited;
             }
         } else {
-            if (!bot.mainLogChannel.messages.get(logIDOptional)) {
+            if (!bot.mainLogChannel.messages.cache.get(logIDOptional)) {
                 console.error(`LOG | Falha ao editar um log. A mensagem especificada não existe. ID providenciado: ${logIDOptional}`.error);
                 return messages.fail.messageDontExist;
             } else {
                 console.log(`LOG | Log editado com sucesso! ID: ${logIDOptional}`.warn);
-                bot.mainLogChannel.messages.get(logIDOptional).edit(bot.mainLogChannel.messages.get(logIDOptional).content + '\n' + logString + ` [${moment(Date.now()).format('LT')}]`,updateReason);
+                bot.mainLogChannel.messages.cache.get(logIDOptional).edit(bot.mainLogChannel.messages.cache.get(logIDOptional).content + '\n' + logString + ` [${moment(Date.now()).format('LT')}]`,updateReason);
                 return messages.success.logEdited;
             }
         }
@@ -229,12 +229,12 @@ module.exports = bot => {
                 return messages.success.logDeleted;
             }
         } else {
-            if (!bot.mainLogChannel.messages.get(logIDOptional)) {
+            if (!bot.mainLogChannel.messages.cache.get(logIDOptional)) {
                 console.error(`LOG | Falha ao deletar um log. A mensagem especificada não existe. ID providenciado: ${logIDOptional}`.error);
                 return messages.fail.messageDontExist;
             } else {
                 console.log(`LOG | Log deletado com sucesso! ID: ${logIDOptional}`.warn);
-                bot.mainLogChannel.messages.get(logIDOptional).delete();
+                bot.mainLogChannel.messages.cache.get(logIDOptional).delete();
                 return messages.success.logDeleted;
             }
         }

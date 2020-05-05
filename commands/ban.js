@@ -1,16 +1,16 @@
 const Discord = require('discord.js');
 
 exports.run = (bot, message, args, settings) => {
-    let toBan = message.mentions.members.first() || message.guild.members.find(u => u.user.id === args[0]) || message.guild.members.find(u => u.user.username === args[0]) || message.guild.members.find(u => `${u.user.username}#${u.user.discriminator}` === args[0]);
+    let toBan = message.mentions.members.first() || message.guild.members.cache.find(u => u.user.id === args[0]) || message.guild.members.cache.find(u => u.user.username === args[0]) || message.guild.members.cache.find(u => `${u.user.username}#${u.user.discriminator}` === args[0]);
     if(!toBan) return message.channel.send('Não foi possível encontrar o usuário!');
     if(toBan.id === "547967082952785933") return message.channel.send("Você tenta banir o bot! É ineficaz!");
     if(toBan.id === "303235142283952128") return message.channel.send("Você não pode; ele é forte demais para você.");
     let banReason = args.slice(1).join(' ');
-    if(!message.member.hasPermission("MANAGE_GUILD")) return message.channel.send("Uhh você precisa ter permissão administrativa ou gerenciar servidor.");
-    if(toBan.hasPermission("MANAGE_GUILD")) return message.channel.send("Uhh essa pessoa não pode ser banida.");
+    if(!message.member.permissions.has("MANAGE_GUILD")) return message.channel.send("Uhh você precisa ter permissão administrativa ou gerenciar servidor.");
+    if(toBan.permissions.has("MANAGE_GUILD")) return message.channel.send("Uhh essa pessoa não pode ser banida.");
     if(!banReason) banReason = "Não especificado";
 
-    let banEmbed = new Discord.RichEmbed()
+    let banEmbed = new Discord.MessageEmbed()
     .setTitle('Ação | Ban')
     .setColor('faff2b')
     .addField('Usuário banido', `${toBan} | ${toBan.id}`)
@@ -33,22 +33,22 @@ exports.run = (bot, message, args, settings) => {
             const reaction = collected.first();
             switch (reaction.emoji.name) {
                 case '✅':
-                    toBan.kick(banReason);
-                    msg.clearReactions();
+                    message.guild.members.ban(toBan, { reason: banReason });
+                    msg.reactions.removeAll();
                     msg.edit('Usuário banido.').then(m => m.delete(5000));
                     break;
                 case '❌':
-                    msg.clearReactions();
+                    msg.reactions.removeAll();
                     msg.edit(`Certo. Não irei banir ${toBan.username}.`).then(m => m.delete(5000));
                     break;
             }
         }).catch(e => {
-            msg.clearReactions();
+            msg.reactions.removeAll();
             msg.edit('Comando cancelado :/').then(m => m.delete(5000));
         });
     });
 
-    let banChannel = message.guild.channels.find(c => c.id == settings.logsChannel);
+    let banChannel = message.guild.channels.cache.find(c => c.id == settings.logsChannel);
     banChannel.send(banEmbed);
 };
 

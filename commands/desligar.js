@@ -24,7 +24,7 @@ exports.run = (bot, message, args) => {
       const Reaction = Collected.first();
       switch (Reaction.emoji.name) {
         case '👋':
-          msg.clearReactions();
+          msg.reactions.removeAll();
           msg.edit(`O bot foi desligado. ${replies[result]}`);
           console.log('BOT | Bot desligado.'.warn);
           bot.updateLog(`——————————— Fim dos logs ——————————— | ${moment(Date.now()).format('lll')} | ——————`);
@@ -32,7 +32,7 @@ exports.run = (bot, message, args) => {
           setTimeout(() => { process.kill(0); },1500);
           break;
         case '🔁':
-          msg.clearReactions();
+          msg.reactions.removeAll();
           msg.edit(`Opa, foi mal! Essa função não está funcionando muito bem!`);
           // bot.updateActivity('Reiniciando... Aguarda ai!',4);
 
@@ -42,12 +42,12 @@ exports.run = (bot, message, args) => {
           // bot.updateActivity('animes sem sentido',4);
           break;
         case '😐':
-          msg.clearReactions();
+          msg.reactions.removeAll();
           msg.edit('Ok, comando cancelado.').then(m => m.delete(5000));
         break;
       }
     }).catch(async () => {
-      await msg.clearReactions();
+      await msg.reactions.removeAll();
       await msg.delete();
     });
 

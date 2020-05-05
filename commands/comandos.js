@@ -27,7 +27,7 @@ exports.run = (bot, message, args) => {
         }
     });
 
-    const embed = new Discord.RichEmbed()
+    const embed = new Discord.MessageEmbed()
     .setTitle(`Total de comandos: ${bot.commands.size}`)
     .setColor("#FFFFFF")
     .setThumbnail('https://cdn.discordapp.com/attachments/587108839707508738/597617316704026634/cmdsimage.png')

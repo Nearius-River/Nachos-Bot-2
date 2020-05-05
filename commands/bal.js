@@ -2,9 +2,9 @@ const Discord = require('discord.js');
 const Profile = require('../models/profile');
 
 exports.run = async (bot, message, args, settings) => {
-    let embed = new Discord.RichEmbed()
+    let embed = new Discord.MessageEmbed()
     .setColor('#FFFFFF')
-    .setAuthor(message.author.tag, message.author.displayAvatarURL);
+    .setAuthor(message.author.tag, message.author.displayAvatarURL());
 
     Profile.findOne({userID: message.author.id}, async (err, profile) => {
         if (err) console.error(err);

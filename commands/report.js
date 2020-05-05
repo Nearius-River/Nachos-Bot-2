@@ -1,7 +1,7 @@
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 exports.run = async (bot, message, args, settings, user, send) => {
-    let reportChannel = message.guild.channels.find(c => c.id == settings.reportChannel);
+    let reportChannel = message.guild.channels.cache.find(c => c.id == settings.reportChannel);
     if (!reportChannel) {
         await message.delete();
         message.channel.send('Não foi possivel encontrar um canal para denúncias. Contate um administrador.');
@@ -20,7 +20,7 @@ exports.run = async (bot, message, args, settings, user, send) => {
     }
     message.channel.send('Usuário denunciado com sucesso!');
     await message.delete();
-    const reportEmbed = new RichEmbed()
+    const reportEmbed = new MessageEmbed()
 	.setColor('#FFFFFF')
     .addField('Usuário reportado', `<@${user.id}> | ${user.id}`)
     .addField('Reportado por', `<@${message.author.id}> | ${message.author.id}`)

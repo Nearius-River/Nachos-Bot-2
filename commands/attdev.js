@@ -1,5 +1,5 @@
 exports.run = async (bot, message, args) => {
-    const user = message.mentions.members.first() || message.guild.members.get(args[0]) || bot.members.get(args[0]);
+    const user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || bot.members.get(args[0]);
     if (!user) return;
     if (!message.author.id !== bot.owners[1].id) return message.channel.send('Opa, esse comando é só para desenvolvedores. Foi mal!');
 
@@ -18,24 +18,24 @@ exports.run = async (bot, message, args) => {
             const Reaction = Collected.first();
             switch (Reaction.emoji.name) {
                 case '😎':
-                    msg.clearReactions();
+                    msg.reactions.removeAll();
                     msg.edit(`Beleza, ${user.user.tag} é agora um desenvolvedor!`);
                     bot.updateProfile(user.user, { isDeveloper: true });
                     bot.updateLog(`Novo desenvolvedor adicionado: ${user.id}`);
                     break;
                 case '✌️':
-                    msg.clearReactions();
+                    msg.reactions.removeAll();
                     msg.edit(`Beleza, ${user.user.tag} foi removido dos desenvolvedores.`);
                     bot.updateProfile(user.user, { isDeveloper: false });
                     bot.updatelog(`Desenvolvedor removido: ${user.id}`);
                     break;
                 case '😐':
-                    msg.clearReactions();
+                    msg.reactions.removeAll();
                     msg.edit(`Certo, cancelando comando.`).then(m => m.delete(5000));
                     break;
             }
        }).catch(() => {
-           msg.clearReactions();
+           msg.reactions.removeAll();
            msg.edit('Comando cancelado.').delete(5000);
        });
     });

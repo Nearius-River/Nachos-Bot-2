@@ -1,16 +1,16 @@
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 exports.run = async (bot, message, args, settings) => {
-    let toBan = message.mentions.members.first() || message.guild.members.get(args[0]);
+    let toBan = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
     let banReason = args.slice(1).join(' ');
     if(!toBan) return message.channel.send('Não foi possível encontrar o usuário!');
     if(toBan.id === "547967082952785933") return message.channel.send("Você tenta banir o bot! É ineficaz!");
     if(toBan.id === "303235142283952128") return message.channel.send("Você não pode; ele é forte demais para você.");
-    if(!message.member.hasPermission("MANAGE_GUILD")) return message.channel.send("Uhh você precisa ter permissão administrativa ou gerenciar servidor.");
-    if(toBan.hasPermission("MANAGE_GUILD")) return message.channel.send("Uhh essa pessoa não pode ser banida.");
+    if(!message.member.permissions.has("MANAGE_GUILD")) return message.channel.send("Uhh você precisa ter permissão administrativa ou gerenciar servidor.");
+    if(toBan.permissions.has("MANAGE_GUILD")) return message.channel.send("Uhh essa pessoa não pode ser banida.");
     if(!banReason) banReason = "Não especificado";
 
-    let banEmbed = new RichEmbed()
+    let banEmbed = new MessageEmbed()
     .setTitle('Ação | Soft-ban')
     .setColor('faff2b')
     .addField('Usuário soft-banido', `${toBan} | ${toBan.id}`)
@@ -33,22 +33,22 @@ exports.run = async (bot, message, args, settings) => {
             const reaction = collected.first();
             switch (reaction.emoji.name) {
                 case '✅':
-                    toBan.ban(banReason, 7).then(toBan.unban('Desbanimento automático por Nachos Bot'));
-                    msg.clearReactions();
+                    message.guild.members.ban(toBan, { days: 7, reason: banReason}).then(message.guild.members.unban(toBan, { reason: 'Desbanimento automático por Nachos Bot' }));
+                    msg.reactions.removeAll();
                     msg.edit('Usuário soft-banido.').then(m => m.delete(5000));
                     break;
                 case '❌':
-                    msg.clearReactions();
+                    msg.reactions.removeAll();
                     msg.edit(`Certo. Não irei soft-banir ${toBan.username}.`).then(m => m.delete(5000));
                     break;
             }
-        }).catch(e => {
-            msg.clearReactions();
+        }).catch(() => {
+            msg.reactions.removeAll();
             msg.edit('Comando cancelado :/').then(m => m.delete(5000));
         });
     });
 
-    let banChannel = message.guild.channels.find(c => c.id == settings.logsChannel);
+    let banChannel = message.guild.channels.cache.find(c => c.id == settings.logsChannel);
     banChannel.send(banEmbed);
 };
 

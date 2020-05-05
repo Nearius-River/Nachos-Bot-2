@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 exports.run = async (bot, message, args, settings) => {
-    if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send("Uhh você precisa de permissão administrativa ou gerenciar mensagens.");
+    if(!message.member.permissions.has("MANAGE_MESSAGES")) return message.channel.send("Uhh você precisa de permissão administrativa ou gerenciar mensagens.");
     if(!args[0]) return message.channel.send("Você precisa especificar quantas mensagens serão apagadas. EX: *apagar 20");
     if(isNaN(args[0])) return message.channel.send("Uhh você não pode apagar usando letras.");
     if(args[0] <= 0) return message.channel.send("O número de mensagens a ser apagada precisa ser positivo.");
@@ -52,7 +52,7 @@ exports.run = async (bot, message, args, settings) => {
 
     if(args[0] >= 501) return message.channel.send("Você só pode apagar até 500 mensagens enviadas nas 2 últimas semanas.");
 
-    let logEmbed = new Discord.RichEmbed()
+    let logEmbed = new Discord.MessageEmbed()
     .setTitle(`Ação | Limpar`)
     .setColor("#FFFFFF")
     .addField("Mensagens apagadas", `${args[0]}`)
@@ -60,7 +60,7 @@ exports.run = async (bot, message, args, settings) => {
     .addField("Canal", message.channel)
     .setTimestamp();
 
-    let logChannel = message.guild.channels.find(c => c.id === settings.logsChannel);
+    let logChannel = message.guild.channels.cache.find(c => c.id === settings.logsChannel);
     if (!logChannel) return;
     logChannel.send(logEmbed);
 };
@@ -72,5 +72,5 @@ exports.help = {
     descrição: "Limpa até 500 mensagens enviadas nas últimas 2 semanas.",
     uso: "limpar <quantidade> | limpar 20",
     permissões: "Gerenciar mensagens",
-    disabled: false
+    disabled: true
 };

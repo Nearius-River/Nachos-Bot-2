@@ -1,18 +1,18 @@
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 exports.run = async (bot, message, args, settings) => {
     console.log(bot.owner.id);
     if (!args[1]) return message.channel.send('Muitos poucos detalhes providenciados. Tenha certeza de dar o máximo de detalhes possiveis quando usar esse comando.');
-    const embed = new RichEmbed()
+    const embed = new MessageEmbed()
     .setColor('#ff4f4f')
-    .setAuthor(`${message.author.tag} | ${message.author.id}`, message.author.displayAvatarURL)
+    .setAuthor(`${message.author.tag} | ${message.author.id}`, message.author.displayAvatarURL())
     .setDescription(args.join(' '))
     .setTimestamp();
 
 	await message.delete().catch();
 	message.channel.send('Certo... Denúncia de bug enviada com sucesso ao desenvolvedor!');
 
-    bot.users.get('303235142283952128').send(embed);
+    bot.users.cache.get('303235142283952128').send(embed);
 };
 
 exports.help = {

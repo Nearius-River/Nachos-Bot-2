@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 exports.run = async (bot, message, args, settings) => {
     const toCmd = args[0];
-    let embed = new Discord.RichEmbed();
+    let embed = new Discord.MessageEmbed();
     const toInfo = bot.commands.get(toCmd) || bot.commands.find(c => c.help.aliases.some(word => word === toCmd));
     if (toCmd == 'ajuda' || !toCmd || toCmd == 'help' || !toInfo) return message.channel.send(`Para obter ajuda em um comando, use \`ajuda <comando>\` **Exemplo:** ajuda mute\nPara uma lista de comandos, use **comandos**\nCaso tenha encontrado algum erro, contate Near#8072 ou use o comando \`bugreport\`.`);
 

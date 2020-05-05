@@ -4,7 +4,7 @@ const { Profile } = require('../models');
 exports.run = async (bot, message, args, settings) => {
     Profile.sort([['coins', 'descending']]).exec( async (err, result) => {
         if (err) console.error(err);
-        let embed = new Discord.RichEmbed()
+        let embed = new Discord.MessageEmbed()
         .setTitle('Top usuários mais ricos');
         if (result.size === 10) {
             embed.setColor("#ff0000");
@@ -12,7 +12,7 @@ exports.run = async (bot, message, args, settings) => {
         } else if (result.size < 10) {
             embed.setColor("#FFFFFF");
             for (let i = 0; i < result.size; i++) {
-              let member = message.guild.members.get(result[i].userID) || "Usuário não encontrado";
+              let member = message.guild.members.cache.get(result[i].userID) || "Usuário não encontrado";
               if (member === "Usuário não encontrado"){
                 embed.addField(`Top ${i + 1}: ${member}`, `Valor total: ${result[i].coins + result[i].depositado}`);
               } else {
@@ -22,7 +22,7 @@ exports.run = async (bot, message, args, settings) => {
         } else {
             embed.setColor("#FFFFFF");
             for(let i = 0; i < 10; i++) {
-              let member = message.guild.members.get(result[i].userID) || "Usuário não encontrado";
+              let member = message.guild.members.cache.get(result[i].userID) || "Usuário não encontrado";
               if(member === "Usuário não encontrado"){
                 embed.addField(`${i + 1}, ${member}`, `Valor total: ${result[i].coins + result[i].depositado}`);
               } else {

@@ -1,6 +1,6 @@
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
-exports.run = async (bot, message, args, settings, user, send) => {
+exports.run = async (bot, message, args) => {
 
 };
 

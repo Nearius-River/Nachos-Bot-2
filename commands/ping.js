@@ -1,8 +1,8 @@
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 exports.run = (bot, message, args) => {
 
-    const resultEmbed = new RichEmbed()
+    const resultEmbed = new MessageEmbed()
     //.setTitle(replies[result])
     .setColor(process.env.INVISIBLE)
     .addField(`Ping atual`, `Aproximadamente **${Math.floor(bot.ping)}** milisegundos`)

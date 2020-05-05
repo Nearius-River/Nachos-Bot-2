@@ -4,9 +4,9 @@ moment.locale('pt-br');
 
 exports.run = async (bot, message, args) => {
     let role = args.join(' ');
-    let findRole = message.guild.roles.find(r => r.name.includes(role) || r.id == role);
+    let findRole = message.guild.roles.cache.find(r => r.name.includes(role) || r.id == role);
     if (!findRole || !args[0]) return message.channel.send('Não foi possivel encontrar esse cargo :/');
-    let embed = new Discord.RichEmbed()
+    let embed = new Discord.MessageEmbed()
     .setColor(findRole.hexColor)
     .setTitle(`${findRole.name} | ${findRole.id}`);
 
@@ -19,7 +19,7 @@ exports.run = async (bot, message, args) => {
             embed.addField('Cor (hex)', findRole.hexColor);
         }
         embed.addField('Criado em', moment(findRole.createdAt).format('lll'));
-        embed.addField('Posição', `${findRole.position}/${message.guild.roles.size - 1}`);
+        embed.addField('Posição', `${findRole.position}/${message.guild.roles.cache.size - 1}`);
         if (findRole.hoist == true) {
             embed.addField('Exibe separadamente', 'Sim');
         } else {
