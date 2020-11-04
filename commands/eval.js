@@ -56,12 +56,18 @@ exports.run = async (bot, message, args) => {
       }
 };
 
-exports.help = {
-    name: "eval",
-    aliases: ['evaluar', 'evaluate', 'exec', 'execute', 'executar'],
-    categoria: "Desenvolvedor",
-    descrição: "Executa um código em JavaScript.",
-    uso: "eval <código>",
-    permissões: "Desenvolvedor apenas",
+exports.command = {
+    aliases: [],
+    description: "Executa um código em JavaScript.",
+    usage: "eval <código>",
+    commandPermissions: ['OWNER'],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: true
+    },
     disabled: false
 };

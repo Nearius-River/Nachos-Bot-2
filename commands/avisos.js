@@ -18,12 +18,18 @@ exports.run = async (bot, message, args, settings) => {
     });
 };
 
-exports.help = {
-    name: "avisos",
-    aliases: ['warnings'],
-    categoria: "Moderação",
-    descrição: "Checa os avisos de um usuário.",
-    uso: "avisos <usuário> | avisos Near",
-    permissões: "Gerenciar mensagens",
+exports.command = {
+    aliases: ['warns', 'warnings'],
+    description: "Visualiza os avisos do perfil de um usuário.",
+    usage: "avisos <usuário> | avisos Near",
+    commandPermissions: ['MANAGE_MESSAGES'],
+    commandCategory: {
+        administration: true,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

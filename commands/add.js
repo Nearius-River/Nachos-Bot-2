@@ -35,12 +35,18 @@ exports.run = async (bot, message, args, settings) => {
     }
 };
 
-exports.help = {
-    name: "add",
-    aliases: ['roles.add', 'addcargo', 'adicionar'],
-    categoria: "Moderação",
-    descrição: "Adiciona um cargo à um usuário ou à alguns usuários.",
-    uso: "add <usuário ou opções> <cargo> | add Near Admin | add todos Membro",
-    permissões: "Gerenciar cargos",
+exports.command = {
+    aliases: ['giverole'],
+    description: "Adiciona um cargo a um usuário ou a alguns usuários.",
+    usage: "add <usuário ou opções> <cargo> | add Monika egg | add todos Membro",
+    commandPermissions: ['MANAGE_ROLES'],
+    commandCategory: {
+        administration: true,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

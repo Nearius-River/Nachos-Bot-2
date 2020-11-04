@@ -22,12 +22,18 @@ exports.run = async (bot, message, args, settings) => {
     logChannel.send(unmuteEmbed);
 };
 
-exports.help = {
-    name: "unmute",
-    aliases: ['desmutar'],
-    categoria: "Moderação",
-    descrição: "Remove o mute de um usuário.",
-    uso: "unmute <usuário> | unmute @Near",
-    permissões: "Gerenciar mensagens",
+exports.command = {
+    aliases: [],
+    description: "Remove o mute de um usuário, caso esteja mutado.",
+    usage: "unmute <usuário> | unmute Near",
+    commandPermissions: ['MANAGE_MESSAGES'],
+    commandCategory: {
+        administration: true,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

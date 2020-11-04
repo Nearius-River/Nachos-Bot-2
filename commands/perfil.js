@@ -20,21 +20,18 @@ exports.run = async (bot, message, args) => {
     }
 };
 
-exports.help = {
-    name: "nivel",
-    aliases: ['level', 'rank'],
-    descrição: "Visualiza seu nível, experiência e outras informações.",
-    uso: "nivel [usuário] | nivel Near",
-    permissões: "Nenhuma", //' Substituir por array de permissões mais tarde '//
-    categoria: "Informação",
-    // categoriaDeComando: {
-    //     moderação: false,
-    //     informação: true,
-    //     economia: false,
-    //     servidor: false,
-    //     diversão: false,
-    //     desenvolvedor: false,
-    //     outros: false
-    // }, //' Nova forma de determinar a categoria de um comando, substituiundo "categoria" '//
+exports.command = {
+    aliases: ['status', 'profile'],
+    description: "Visualiza seu nível, pontos de atividade, e outras informações.",
+    usage: "perfil [usuário] | perfil Monika",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: true,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

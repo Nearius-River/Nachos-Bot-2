@@ -39,12 +39,18 @@ exports.run = async (bot, message, args) => {
     });
 };
 
-exports.help = {
-    name: "blacklist",
-    aliases: ['shadowrealm', 'byebye'],
-    categoria: "Desenvolvedor",
-    descrição: "Adiciona ou remove um usuário da blacklist.",
-    uso: "blacklist <usuário>",
-    permissões: "Desenvolvedor apenas",
+exports.command = {
+    aliases: ['shadowrealm'],
+    description: "Adiciona ou remove um usuário da blacklist.",
+    usage: "blacklist <usuário>",
+    commandPermissions: ['OWNER'],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: true
+    },
     disabled: false
 };

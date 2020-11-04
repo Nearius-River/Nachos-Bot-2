@@ -15,12 +15,18 @@ exports.run = async (bot, message, args, settings) => {
     bot.users.cache.get('303235142283952128').send(embed);
 };
 
-exports.help = {
-    name: "bugreport",
-    aliases: ['reportbug'],
-    categoria: "Outros",
-    descrição: "Encontrou um erro no bot? Algum bug? Use esse comando para reportar para o desenvolvedor (por favor, não abuse do comando).",
-    uso: "bugreport <detalhes> | bugreport Isso aparece quando eu uso o comando...",
-    permissões: "Nenhuma",
+exports.command = {
+    aliases: [],
+    description: "Usado para reportar algum bug/erro encontrado. Tente sempre incluir o máximo de detalhes possiveis, preferivelmente uma screenshot do problema.",
+    usage: "bugreport <detalhes> | bugreport Isso aparece quando eu uso o comando x (...)",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: true,
+        music: false,
+        development: false
+    },
     disabled: false
 };

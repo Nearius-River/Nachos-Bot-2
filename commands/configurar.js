@@ -173,3 +173,19 @@ exports.help = {
     permissões: "Gerenciar servidor",
     disabled: false
 };
+
+exports.command = {
+    aliases: ['config'],
+    description: "Configura aspectos gerais do bot no seu servidor. Para mais ajuda, digite \"configurar\".",
+    usage: "configurar <chave de configuração> [novo valor] | configurar muted-role Mute",
+    commandPermissions: ['MANAGE_GUILD'],
+    commandCategory: {
+        administration: true,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
+    disabled: false
+};

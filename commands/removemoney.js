@@ -14,12 +14,18 @@ exports.run = async (bot, message, args, settings) => {
     message.channel.send(`Foram removidos ${args[1]} reais da conta do ${user.user.tag}.`);
 };
 
-exports.help = {
-    name: "delmoney",
-    aliases: ['delcash', 'delreais'],
-    categoria: "Desenvolvedor",
-    descrição: "Remove uma quantidade de reais de um usuário.",
-    uso: "delmoney <usuário> <quantidade>",
-    permissões: "Desenvolvedor apenas",
+exports.command = {
+    aliases: ['removecash', 'remove-cash', 'delmoney', 'del-money'],
+    description: "Remove uma quantidade de reais de um usuário.",
+    usage: "removemoney <usuário> <quantidade>",
+    commandPermissions: ['DEVELOPER'],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: true
+    },
     disabled: false
 };

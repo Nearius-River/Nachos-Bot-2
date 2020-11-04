@@ -52,12 +52,18 @@ exports.run = (bot, message, args, settings) => {
     banChannel.send(banEmbed);
 };
 
-exports.help = {
-    name: "ban",
-    aliases: ['banir', 'b'],
-    categoria: 'Moderação',
-    descrição: "Bane um usuário do servidor.",
-    uso: "ban <usuário> [motivo] | ban Near porque eu quis",
-    permissões: "Gerenciar servidor",
+exports.command = {
+    aliases: [],
+    description: "Bane um usuário do servidor.",
+    usage: "ban <usuário> [motivo] | ban Near sadboyolagem",
+    commandPermissions: ['MANAGE_GUILD'],
+    commandCategory: {
+        administration: true,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

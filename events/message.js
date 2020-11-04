@@ -28,24 +28,32 @@ module.exports = async (bot, message) => {
 
     if (message.content.indexOf(settings.prefix) !== 0) return; //' If message don't starts with the prefix, return nothing '//
     let args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
-    let member = message.mentions.members.first() || message.guild.members.cache.find(u => u.id == args[0]) || message.guild.members.cache.find(u => u.user.username === args[0]) || message.guild.members.cache.find(u => u.user.tag === args[0]) || message.guild.members.cache.find(u => args[0].includes(u.nickname)) || message.guild.members.cache.find(u => args[0].includes(u.username)) || message.member;
+    let member =
+    message.mentions.members.first() ||
+    message.guild.members.cache.find(u => u.id == args[0]) ||
+    message.guild.members.cache.find(u => u.user.tag == args[0]) ||
+    message.guild.members.cache.find(u => args[0].includes(u.username)) ||
+    message.member;
 
-    let command = args.shift().toLowerCase();
+    let commandName = args.shift().toLowerCase();
     let cmd;
-    if (bot.commands.has(command)) {
-        cmd = bot.commands.get(command);
-    } else if (bot.aliases.has(command)) {
-        cmd = bot.commands.get(bot.aliases.get(command));
+    if (bot.commands.has(commandName)) {
+        cmd = bot.commands.get(commandName);
+    } else if (bot.aliases.has(commandName)) {
+        cmd = bot.commands.get(bot.aliases.get(commandName));
+    } else {
+        return;
     }
 
-    if (cmd ? cmd.help.disabled : true && bot.owners.includes(message.author)) return message.channel.send('Opa, foi mal! Esse comando foi desativado pelo desenvolvedor!'); //' If 'exports.help.disabled' is set to true on any command, don't execute the command and return nothing '//
+    if (cmd.command.disabled == true && bot.owners.includes(message.author)) return message.channel.send('Opa, foi mal! Esse comando foi desativado pelo desenvolvedor!'); //' If 'exports.command.disabled' is set to true on any command, don't execute the command and return nothing '//
     if (userProfile ? userProfile.isBlacklisted : true) return; //' If message author is blacklisted, return nothing '//
 
     try {
         cmd.run(bot, message, args, settings, member); //' Executes the command '//
         bot.increaseCommandCount();
-		bot.updateLog('Comando usado -> ' + cmd.help.name + ', usado por ' + message.member.nickname);
+		bot.updateLog('Comando usado -> ' + commandName + ', usado por ' + message.member.nickname);
     } catch (e) {
+        message.channel.send('Um eggrro ocorreu:\n' + '```js' + e + '```');
         return;
     }
 

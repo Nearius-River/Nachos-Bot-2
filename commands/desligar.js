@@ -84,12 +84,18 @@ exports.run = (bot, message, args) => {
   });
 };
 
-exports.help = {
-  name: "desligar",
-  aliases: ['shutdown', 'dormir', 'renascer'],
-  categoria: "Desenvolvedor",
-  descrição: "Desliga ou reinicia o bot.",
-  uso: "desligar",
-  permissões: "Desenvolvedor apenas",
+exports.command = {
+  aliases: ['dormir'],
+  description: "Encerra a conexão do bot com os servidores do Discord.",
+  usage: "",
+  commandPermissions: ['DEVELOPER'],
+  commandCategory: {
+      administration: false,
+      information: false,
+      economy: false,
+      util: false,
+      music: false,
+      development: true
+  },
   disabled: false
 };

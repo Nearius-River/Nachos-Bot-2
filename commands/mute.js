@@ -53,12 +53,18 @@ exports.run = async (bot, message, args, settings) => {
 
 };
 
-exports.help = {
-    name: "mute",
-    aliases: ['mutar', 'm'],
-    categoria: "Moderação",
-    descrição: "Muta um usuário por um tempo determinado.",
-    uso: "mute <usuário> <tempo> [motivo] | mute @Near 300s falando merda",
-    permissões: "Gerenciar mensagens",
+exports.command = {
+    aliases: [],
+    description: "Impede um usuário de digitar no chat por um tempo determinado.",
+    usage: "mute <usuário> <tempo> [motivo] | mute Near 300s regra número 420",
+    commandPermissions: ['MANAGE_MESSAGES'],
+    commandCategory: {
+        administration: true,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

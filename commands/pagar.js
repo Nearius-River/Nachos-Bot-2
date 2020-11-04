@@ -25,12 +25,18 @@ exports.run = async (bot, message, args, settings) => {
     });
 };
 
-exports.help = {
-    name: "pagar",
-    aliases: ['pay', 'enviar', 'doar', 'send'],
-    categoria: "Economia",
-    descrição: "Envia uma quantidade de reais para um usuário.",
-    uso: "pagar <usuário> <quantidade> | pagar Near 20",
-    permissões: "Nenhuma",
+exports.command = {
+    aliases: ['pay', 'send', 'send-money', 'send-cash'],
+    description: "Envia uma quantidade de reais para um usuário.",
+    usage: "pagar <usuário> <quantidade> | pagar Near 20",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: true,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

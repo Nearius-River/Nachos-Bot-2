@@ -18,12 +18,18 @@ exports.run = async (bot, message, args, settings) => {
     });
 };
 
-exports.help = {
-    name: "depositar",
+exports.command = {
     aliases: ['dep'],
-    categoria: "Economia",
-    descrição: "Deposita uma quantidade de reais no banco.",
-    uso: "depositar <quantidade> | depositar 100",
-    permissões: "Nenhuma",
+    description: "Deposita uma quantidade de reais no banco. Dinheiro depositado não pode ser roubado.",
+    usage: "depositar <quantidade> | depositar 100",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: true,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

@@ -18,3 +18,19 @@ exports.help = {
     permissões: "Nenhuma",
     disabled: false
 };
+
+exports.command = {
+    aliases: ['sharedservers'],
+    description: "Mostra uma lista de servidores compartilhados entre o usuário e o bot.",
+    usage: "emcomum <usuário> | emcomum Near",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: true,
+        music: false,
+        development: false
+    },
+    disabled: false
+};

@@ -65,12 +65,18 @@ exports.run = async (bot, message, args, settings) => {
     logChannel.send(logEmbed);
 };
 
-exports.help = {
-    name: "limpar",
-    aliases: ['clean', 'clear'],
-    categoria: "Moderação",
-    descrição: "Limpa até 500 mensagens enviadas nas últimas 2 semanas.",
-    uso: "limpar <quantidade> | limpar 20",
-    permissões: "Gerenciar mensagens",
-    disabled: true
+exports.command = {
+  aliases: ['purge', 'clear'],
+  description: "Limpa até 500 mensagens enviadas nas últimas 2 semanas.",
+  usage: "limpar <quantidade> | limpar 20",
+  commandPermissions: ['MANAGE_MESSAGES'],
+  commandCategory: {
+      administration: true,
+      information: false,
+      economy: false,
+      util: false,
+      music: false,
+      development: false
+  },
+  disabled: true
 };

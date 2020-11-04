@@ -62,3 +62,19 @@ exports.help = {
     permissões: "Gerenciar servidor",
     disabled: false
 };
+
+exports.command = {
+    aliases: [],
+    description: "Remove um usuário do servidor",
+    usage: "kick <usuário> [motivo] | kick Near regra número 69",
+    commandPermissions: ['MANAGE_GUILD'],
+    commandCategory: {
+        administration: true,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
+    disabled: false
+};

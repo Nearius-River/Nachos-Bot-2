@@ -18,12 +18,18 @@ exports.run = async (bot, message, args, settings) => {
     });
 };
 
-exports.help = {
-    name: "sacar",
-    aliases: ['sac', 'saque'],
-    categoria: "Economia",
-    descrição: "Saca uma quantidade de reais do banco.",
-    uso: "sacar <quantidade> | sacar 100",
-    permissões: "Nenhuma",
+exports.command = {
+    aliases: ['sac', 'with', 'withdraw'],
+    description: "Saca uma quantidade de reaid depositada no banco.",
+    usage: "sacar <quantidade> | sacar 100",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: true,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

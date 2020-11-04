@@ -46,12 +46,18 @@ exports.run = async (bot, message, args) => {
     }
 };
 
-exports.help = {
-    name: "roleplay",
+exports.command = {
     aliases: ['rp'],
-    descrição: "Várias utilidades para roleplays no Discord. Mais feito para as roleplays do Hyperium.",
-    uso: "roleplay <obter> <o que você quiser> | roleplay obter ficha\nPara mais exemplos, apenas digite o comando sem argumentos para uma lista de opções.",
-    categoria: "Outros",
-    permissões: "Nenhuma",
+    description: "Várias utilidades para roleplays no Discord. Mais feito para as roleplays do Hyperium.",
+    usage: "roleplay <obter> <o que você quiser> | roleplay obter ficha\nPara mais exemplos, apenas digite o comando sem argumentos para uma lista de opções.",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: true,
+        music: false,
+        development: false
+    },
     disabled: false
 };

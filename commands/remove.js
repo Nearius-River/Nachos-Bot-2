@@ -33,12 +33,18 @@ exports.run = async (bot, message, args, settings) => {
     }
 };
 
-exports.help = {
-    name: "remover",
-    aliases: ['remrole', 'removercargo'],
-    categoria: "Moderação",
-    descrição: "Remove um cargo de um usuário ou de alguns usuários.",
-    uso: "remover <usuário ou opções> <cargo> | remover Near Admin | remover todos Membro",
-    permissões: "Gerenciar cargos",
+exports.command = {
+    aliases: ['removerole', 'remove-role', 'remrole'],
+    description: "Retira um cargo de um usuário ou de alguns usuários.",
+    usage: "remove <usuário ou opções> <cargo> | remover Near Admin | remover todos Membro",
+    commandPermissions: ['MANAGE_ROLES'],
+    commandCategory: {
+        administration: true,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

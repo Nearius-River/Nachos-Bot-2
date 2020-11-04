@@ -34,12 +34,18 @@ exports.run = async (bot, message, args, settings) => {
     logChannel.send(logEmbed);
 };
 
-exports.help = {
-    name: "avisar",
-    aliases: ['aviso', 'warn'],
-    categoria: "Moderação",
-    descrição: "Dá um aviso ao usuário mencionado.",
-    uso: "avisar <usuário> [motivo] | avisar @Near quebrando regras",
-    permissões: "Gerenciar mensagens",
+exports.command = {
+    aliases: ['warn'],
+    description: "Adiciona um aviso ao perfil do usuário mencionado.",
+    usage: "avisar <usuário> [motivo] | avisar Near disse que o big chungus não é engraçado.",
+    commandPermissions: ['MANAGE_MESSAGES'],
+    commandCategory: {
+        administration: true,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

@@ -13,12 +13,18 @@ exports.run = async (bot, message, args, settings, member) => {
     message.channel.send(embed);
 };
 
-exports.help = {
-    name: "pfp",
-    aliases: ['avatar'],
-    categoria: "Informação",
-    descrição: "Visualiza o avatar de um usuário.",
-    uso: "avatar [usuário] | avatar Near",
-    permissões: "Nenhuma",
+exports.command = {
+    aliases: ['av', 'avatar'],
+    description: "Visualiza o avatar completo de um usuário.",
+    usage: "avatar [usuário] | avatar Near",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: true,
+        music: false,
+        development: false
+    },
     disabled: false
 };

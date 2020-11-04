@@ -1,4 +1,3 @@
-const { MessageEmbed } = require('discord.js');
 const binary = require('decode-encode-binary');
 
 exports.run = async (bot, message, args) => {
@@ -7,12 +6,18 @@ exports.run = async (bot, message, args) => {
     message.channel.send('Convertido com sucesso! Resultado: ' + '`' + binary.auto(BinaryCode, true) + '`');
 };
 
-exports.help = {
-    name: "binary",
-    aliases: ['binario'],
-    categoria: "Outros",
-    descrição: "Converte texto para código binário e vice-versa.",
-    uso: "binary <texto ou código binário> | binary Toper | binary 01100001",
-    permissões: "Nenhuma",
+exports.command = {
+    aliases: [],
+    description: "Converte texto para código binário e vice-versa.",
+    usage: "binary <texto ou código binário> | binary Toper | binary 01100001",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: true,
+        music: false,
+        development: false
+    },
     disabled: false
 };

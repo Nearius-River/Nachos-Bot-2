@@ -14,12 +14,18 @@ exports.run = async (bot, message, args, settings) => {
     message.channel.send(`Foram adicionados ${args[1]} reais na conta do ${user.user.tag}.`);
 };
 
-exports.help = {
-    name: "addmoney",
-    aliases: ['addcash', 'addreais'],
-    categoria: "Desenvolvedor",
-    descrição: "Adiciona uma quantidade de reais a um usuário.",
-    uso: "addmoney <usuário> <quantidade>",
-    permissões: "Desenvolvedor apenas",
+exports.command = {
+    aliases: ['addcash', 'givemoney', 'add-cash', 'give-money'],
+    description: "Adiciona uma quantidade de reais a um usuário.",
+    usage: "addmoney <usuário> <quantidade>",
+    commandPermissions: ['DEVELOPER'],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: true
+    },
     disabled: false
 };

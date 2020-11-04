@@ -3,12 +3,18 @@ exports.run = async (bot, message, args, settings, member) => {
     console.log(`Donos > ${profile.owners}`);
 };
 
-exports.help = {
-    name: "test",
-    aliases: ['testar', 'teste', 'experimentar'],
-    categoria: "Desenvolvedor",
-    descrição: "Testes",
-    uso: "test ? {...} == true : resultado",
-    permissões: "Desenvolvedor apenas",
+exports.command = {
+    aliases: [],
+    description: "Testes. Poderia ser mais explicativo que isso?",
+    usage: "test ?<[...]>",
+    commandPermissions: ['DEVELOPER'],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: true
+    },
     disabled: false
 };

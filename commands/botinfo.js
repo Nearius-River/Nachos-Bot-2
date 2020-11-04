@@ -24,3 +24,19 @@ exports.help = {
     permissões: "Nenhuma",
     disabled: false
 };
+
+exports.command = {
+    aliases: ['info'],
+    description: "Visualiza diversas informações sobre o bot.",
+    usage: "",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: true,
+        music: false,
+        development: false
+    },
+    disabled: false
+};

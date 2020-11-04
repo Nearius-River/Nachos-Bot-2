@@ -56,8 +56,24 @@ exports.help = {
     name: "softban",
     aliases: [],
     categoria: "Moderação",
-    descrição: "Bane um usuário e em seguida, o desbane. Útil para limpar mensagens enviadas pelo usuário.",
+    descrição: "Bane um usuário, e, em seguida, o desbane. Útil para limpar mensagens enviadas recentemente por alguém.",
     uso: "softban <usuário> [motivo] | softban Near spam & flood",
     permissões: "Gerenciar servidor",
+    disabled: false
+};
+
+exports.command = {
+    aliases: [],
+    description: "Bane um usuário, e, em seguida, o desbane. Útil para limpar mensagens enviadas recentemente por alguém.",
+    usage: "tban <usuário> [motivo] | softban Near reclamando da regra 1337",
+    commandPermissions: ['MANAGE_GUILD'],
+    commandCategory: {
+        administration: true,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

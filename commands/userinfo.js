@@ -33,12 +33,18 @@ exports.run = async (bot, message, args, settings) => {
     message.channel.send(embed);
 };
 
-exports.help = {
-    name: "userinfo",
+exports.command = {
     aliases: [],
-    categoria: "Informação",
-    descrição: "Visualiza informações sobre um usuário.",
-    uso: "userinfo [usuário] [opção] | userinfo Near",
-    permissões: "Nenhuma",
+    description: "Visualiza informações sobre um usuário.",
+    usage: "userinfo [usuário] [opção] | userinfo Near",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: true,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

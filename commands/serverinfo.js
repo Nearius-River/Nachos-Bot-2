@@ -113,12 +113,18 @@ exports.run = async (bot, message, args, settings) => {
     });
 };
 
-exports.help = {
-    name: "serverinfo",
-    aliases: ['server', 'servidor'],
-    categoria: "Informação",
-    descrição: "Visualiza informações gerais sobre o servidor.",
-    uso: "serverinfo [opção] | serverinfo cargos",
-    permissões: "Nenhuma",
+exports.command = {
+    aliases: [],
+    description: "Visualiza informações gerais sobre o servidor.",
+    usage: "serverinfo [opção] | serverinfo cargos",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: true,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

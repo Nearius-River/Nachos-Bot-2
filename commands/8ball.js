@@ -10,12 +10,18 @@ exports.run = async (bot, message, args, settings) => {
 
 };
 
-exports.help = {
-    name: "8ball",
-    aliases: ['bolamagica'],
-    categoria: "Diversão",
-    descrição: "Pergunte a poderosa bola mágica.",
-    uso: "8ball <pergunta> | 8ball eu tenho probleminha",
-    permissões: "Nenhuma",
+exports.command = {
+    aliases: [],
+    description: "Pergunte a poderosa bola mágica.",
+    usage: "8ball <pergunta> | 8ball quando minha waifu será realidade?",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: true,
+        music: false,
+        development: false
+    },
     disabled: false
 };

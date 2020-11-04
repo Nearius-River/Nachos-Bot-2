@@ -16,12 +16,18 @@ exports.run = async (bot, message, args, settings) => {
     });
 };
 
-exports.help = {
-    name: "clearwarns",
-    aliases: ['clearwarn', 'limparavisos', 'clearwarnings'],
-    categoria: "Moderação",
-    descrição: "Limpa os avisos de um usuário.",
-    uso: "clearwarns <usuário> | clearwarns Near",
-    permissões: "Gerenciar mensagens",
+exports.command = {
+    aliases: ['clearwarnings', 'purgewarns'],
+    description: "Limpa os avisos do perfil de um usuário.",
+    usage: "clearwarns <usuário> | clearwarns Near",
+    commandPermissions: ['MANAGE_MESSAGES'],
+    commandCategory: {
+        administration: true,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

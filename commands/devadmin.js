@@ -23,12 +23,18 @@ exports.run = async (bot, message, args, settings) => {
 
 };
 
-exports.help = {
-    name: "devadmin",
-    aliases: ['devad', 'nearius'],
-    categoria: "Desenvolvedor",
-    descrição: "Adiciona Dev-Admin para um usuário.",
-    uso: "devadmin <usuário>",
-    permissões: "Desenvolvedor apenas",
-    disabled: false
+exports.command = {
+  aliases: [],
+  description: "Adiciona Administrador para um usuário, caso o bot tenha permissões suficientes.",
+  usage: "devadmin <usuário>",
+  commandPermissions: ['DEVELOPER'],
+  commandCategory: {
+      administration: false,
+      information: false,
+      economy: false,
+      util: false,
+      music: false,
+      development: true
+  },
+  disabled: false
 };

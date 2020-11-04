@@ -18,12 +18,18 @@ exports.run = async (bot, message, args, settings, member) => {
     }
 };
 
-exports.help = {
-    name: "lembrar",
-    aliases: ['remind', 'remindme', 'melembrar', 'lembrete'],
-    descrição: "Define um lembrete para você. Quando o tempo chegar, o bot irá mandar uma mensagem no seu PV.",
-    uso: "lembrar <tempo> [lembrete] | lembrar 70m correr | lembrar 2h almoçar",
-    categoria: "Outros",
-    permissões: "Nenhuma",
+exports.command = {
+    aliases: ['remind'],
+    description: "Define um lembrete para você. Quando o tempo chegar, o bot irá mandar uma mensagem no seu PV.",
+    usage: "lembrar <tempo> [lembrete] | lembrar 70m correr | lembrar 2h almoçar",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: true,
+        music: false,
+        development: false
+    },
     disabled: false
 };

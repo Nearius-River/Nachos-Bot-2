@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const Profile = require('../models/profile');
 
 exports.run = async (bot, message, args, settings) => {
     let embed = new Discord.MessageEmbed().setColor('#FFFFFF').setAuthor(message.author.tag, message.author.displayAvatarURL());
@@ -12,12 +11,18 @@ exports.run = async (bot, message, args, settings) => {
     message.channel.send(embed);
 };
 
-exports.help = {
-    name: "bal",
-    aliases: ['balanca', 'reais', 'coins'],
-    categoria: "Economia",
-    descrição: "Verifica sua quantidade de reais.",
-    uso: "bal",
-    permissões: "Nenhuma",
+exports.command = {
+    aliases: ['cash', 'money'],
+    description: "Verifica quanto dinheiro você tem na sua conta.",
+    usage: "",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: true,
+        util: false,
+        music: false,
+        development: false
+    },
     disabled: false
 };

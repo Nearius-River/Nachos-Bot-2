@@ -41,12 +41,18 @@ exports.run = async (bot, message, args) => {
     });
 };
 
-exports.help = {
-    name: "attdev",
-    aliases: ['atualizardev'],
-    categoria: "Desenvolvedor",
-    descrição: "Adiciona ou remove status de desenvolvedor de um usuário.",
-    uso: "attdev <usuário> <lista de opções com emoji> | attdev Monika [Sim | Não | Cancelar]",
-    permissões: "Desenvolvedor apenas.",
+exports.command = {
+    aliases: [],
+    description: "Adiciona ou remove status de desenvolvedor de um usuário.",
+    usage: "attdev <usuário> <lista de opções com emoji> | attdev Monika [Sim | Não | Cancelar]",
+    commandPermissions: ['OWNER'],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: false,
+        music: false,
+        development: true
+    },
     disabled: false
 };

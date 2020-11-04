@@ -14,12 +14,18 @@ exports.run = (bot, message, args) => {
     message.channel.send(botMessage);
 };
 
-exports.help = {
-    name: "diga",
-    aliases: ['say'],
-    categoria: "Diversão",
-    descrição: "Faça o bot falar alguma coisa. É possivel incluir `-e` no conteúdo para enviar como uma embed.",
-    uso: "diga <conteúdo> | diga Bom dia | diga Boa dia -e",
-    permissões: "Nenhuma",
+exports.command = {
+    aliases: [],
+    description: "Faça o bot falar alguma coisa. É possivel incluir `-e` no conteúdo para enviar como uma embed.",
+    usage: "diga <mensagem> | diga Bom dia | diga Boa tarde -e",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: true,
+        music: false,
+        development: false
+    },
     disabled: false
 };

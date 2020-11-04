@@ -12,12 +12,18 @@ exports.run = (bot, message, args) => {
     message.channel.send(resultEmbed);
 };
 
-exports.help = {
-    name: "ping",
-    aliases: ['delay'],
-    categoria: "Informação",
-    descrição: "Verifica a latência (delay) do bot em milisegundos.",
-    uso: "ping",
-    permissões: "Nenhuma",
+exports.command = {
+    aliases: [],
+    description: "Verifica o delay do bot em milisegundos.",
+    usage: "",
+    commandPermissions: [],
+    commandCategory: {
+        administration: false,
+        information: false,
+        economy: false,
+        util: true,
+        music: false,
+        development: false
+    },
     disabled: false
 };
