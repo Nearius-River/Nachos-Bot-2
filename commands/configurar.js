@@ -6,8 +6,9 @@ exports.run = async (bot, message, args, settings) => {
     const setting = args[0];
     const newSetting = args.slice(1).join(' ');
 
-    const helpEmbed = new Discord.MessageEmbed()
-    .setColor('#36393F');
+    const helpEmbed = new Discord.MessageEmbed();
+    const subHelpEmbed = new Discord.MessageEmbed();
+    helpEmbed.setColor('INVISIBLE');
 
     switch (setting) {
         case 'prefixo': {
@@ -43,7 +44,7 @@ exports.run = async (bot, message, args, settings) => {
         case 'reports': {
             if (newSetting) {
                 try {
-                    let channel = message.mentions.channels.first();
+                    let channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
                     if (!channel) return message.channel.send('Esse canal não existe :/');
                     await bot.updateGuild(message.guild, { reportChannel: channel.id });
                     return message.channel.send(`Canal de denúncias definido para: \`${channel.name}\``);
@@ -109,9 +110,17 @@ exports.run = async (bot, message, args, settings) => {
         }
         default: {
             const filter = (reaction, user) => ['❓', '❌'].includes(reaction.emoji.name) && user.id == message.author.id;
-            const subfilter = (reaction, user) => ['◀'].includes(reaction.emoji.name) && user.id == message.author.id;
 
-            message.channel.send('Reaja com o emoji \'?\' para mais informações. Reaja com o emoji \'X\' para redefinir todas as configurações para o padrão.').then(async msg => {
+            subHelpEmbed.setAuthor(`${message.guild.name} | Configurações do bot`, message.guild.iconURL());
+            subHelpEmbed.addField('Prefixo do bot', settings.prefix, true);
+            subHelpEmbed.addField('Canal de logs', settings.logsChannel, true);
+            subHelpEmbed.addField('Canal de reports', settings.reportChannel, true);
+            subHelpEmbed.addField('Cargo de moderador', settings.modRole, true);
+            subHelpEmbed.addField('Cargo de administrador', settings.adminRole, true);
+            subHelpEmbed.addField('Cargo de mutes', settings.mutedRole, true);
+            subHelpEmbed.setColor('GREEN');
+            subHelpEmbed.setFooter('Dica: Reaja com o emoji \'?\' para mais informações. Reaja com o emoji \'X\' para redefinir todas as configurações para o padrão.');
+            message.channel.send(subHelpEmbed).then(async msg => {
 
                 await msg.react('❓');
                 await msg.react('❌');
@@ -125,28 +134,18 @@ exports.run = async (bot, message, args, settings) => {
                     switch (reaction.emoji.name) {
                         case '❓':
                             msg.reactions.removeAll();
-                            helpEmbed.setDescription(`**Ajuda | configurar**
-__Uso:__ configurar <configuração> [nova configuração]
-__Exemplo:__ configurar logs #canal-para-logs
-__Configurações atuais:__ \`prefixo\`, \`logs\`, \`reports\`, \`mod-role\`, \`admin-role\`, \`muted-role\`.
-*Prefixo* -> Define um novo prefixo para o bot no seu servidor.
-*Logs* -> Define o canal pra logs do servidor aonde será postado os logs do bot.
-*Reports* -> Define o canal para denúncias do servidor.
-*Mod role* -> Define o cargo de moderador do bot para comandos moderativos.
-*Admin role* -> Define o cargo de administrador do bot para comandos administrativos.
-*Mute role* -> Define o cargo para mutes do bot.`);
-                            msg.delete();
-                            message.channel.send(helpEmbed);
+                            helpEmbed.setDescription('**Ajuda | configurar**\n__Uso:__ configurar <configuração> [nova configuração]\n__Exemplo__: configurar logs #canal-para-logs\n__Configurações atuais__: `prefixo`, `logs`, `reports`, `mod-role`, `admin-role`, `muted-role`.\n*Prefixo* -> Define um novo prefixo para o bot no seu servidor.\n*Logs* -> Define o canal para logs de moderação.\n*Report* -> Define o canal para denúncias de usuários.\n*Mod role* -> Define o cargo de moderador para comandos do bot.\n*Admin role* -> Define o cargo de administrador para comandos do bot.\n*Mute role* -> Define o cargo usado para mutes.');
+                            message.delete().then(() => message.channel.send(helpEmbed));
                             break;
                         case '❌':
                             msg.reactions.removeAll();
                             try {
                                 await bot.updateGuild(message.guild, { prefix: '*' });
                                 await bot.updateGuild(message.guild, { logsChannel: 'logs' });
+                                await bot.updateGuild(message.guild, { reportChannel: 'reports' });
                                 await bot.updateGuild(message.guild, { modRole: 'Moderador' });
                                 await bot.updateGuild(message.guild, { adminRole: 'Administrador' });
                                 await bot.updateGuild(message.guild, { mutedRole: 'Mutado' });
-                                await bot.updateGuild(message.guild, { reportChannel: 'reports' });
                             } catch (error) {
                                 console.error(error);
                                 message.channel.send(`Um erro ocorreu. Reporte para o desenvolvedor: **${error.message}**`);
@@ -154,9 +153,9 @@ __Configurações atuais:__ \`prefixo\`, \`logs\`, \`reports\`, \`mod-role\`, \`
                             msg.edit('Redefinido todas as configurações para o padrão!');
                             break;
                     }
-                }).catch(e => {
-                    msg.reactions.removeAll();
-                    msg.edit('Comando fechado.').then(m => m.delete(5000));
+                }).catch(async () => {
+                    await msg.reactions.removeAll();
+                    await msg.delete();
                 });
             });
 
@@ -169,7 +168,7 @@ exports.help = {
     name: "configurar",
     aliases: ['config', 'ajustar'],
     categoria: "Servidor",
-    descrição: `Configura aspectos gerais do bot no seu servidor. Para mais informações, digite \`configurar\``,
+    descrição: 'Configura aspectos gerais do bot no seu servidor. Para mais informações, digite `configurar`',
     uso: "configurar <configuração> [nova configuração] | configurar muted-role Mute",
     permissões: "Gerenciar servidor",
     disabled: false

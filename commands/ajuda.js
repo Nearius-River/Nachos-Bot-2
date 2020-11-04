@@ -1,10 +1,10 @@
 const Discord = require('discord.js');
 
-exports.run = async (bot, message, args, settings) => {
+exports.run = async (bot, message, args) => {
     const toCmd = args[0];
     let embed = new Discord.MessageEmbed();
     const toInfo = bot.commands.get(toCmd) || bot.commands.find(c => c.help.aliases.some(word => word === toCmd));
-    if (toCmd == 'ajuda' || !toCmd || toCmd == 'help' || !toInfo) return message.channel.send(`Para obter ajuda em um comando, use \`ajuda <comando>\` **Exemplo:** ajuda mute\nPara uma lista de comandos, use **comandos**\nCaso tenha encontrado algum erro, contate Near#8072 ou use o comando \`bugreport\`.`);
+    if (!toCmd || toCmd == 'ajuda' || toCmd == 'help' || !toInfo) return message.channel.send(`Para obter ajuda em um comando, use \`ajuda <comando>\` **Exemplo:** ajuda mute\nPara uma lista de comandos, use **comandos**\nCaso tenha encontrado algum erro, contate Near#8072 ou use o comando \`bugreport\`.`);
 
     embed.setTitle('Categoria | ' + toInfo.help.categoria);
     embed.addField('Descrição', toInfo.help.descrição);
@@ -27,7 +27,7 @@ exports.run = async (bot, message, args, settings) => {
         embed.setColor('#ffa735');
         embed.setThumbnail('https://cdn.discordapp.com/attachments/587108839707508738/592935408845979659/engine.png');
     } else if (toInfo.help.categoria == 'Desenvolvedor') {
-        if (message.author.id != '303235142283952128') return message.channel.send('Este é um comando apenas para o desenvolvedor. Olhar pode causar confusões ¯\\_(ツ)_/¯');
+        if (!bot.owners.includes(message.author.id)) return message.channel.send('Este é um comando apenas para o desenvolvedor. Olhar pode causar confusões ¯\\_(ツ)_/¯');
         embed.setColor('#7c22d6');
         embed.setThumbnail('https://cdn.discordapp.com/attachments/587108839707508738/592933829115772939/xd.png');
     } else if (toInfo.help.categoria == 'Economia') {
@@ -35,7 +35,6 @@ exports.run = async (bot, message, args, settings) => {
         embed.setThumbnail('https://cdn.discordapp.com/attachments/587108839707508738/592936175346515986/cedula.png');
     } else {
         embed.setColor('#FFFFFF');
-        //' embed.setThumbnail(''); '//
     }
 
     let mat = Math.floor(Math.random() * 4);

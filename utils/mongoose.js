@@ -11,7 +11,7 @@ module.exports = {
             family: 4
         };
 
-        mongoose.connect('mongodb://localhost:27017/nachos', dbOptions);
+        mongoose.connect('mongodb+srv://nearius-river:Legal129*2013*@cluster0-wl6m6.mongodb.net/nachos?retryWrites=true&w=majority', dbOptions);
         mongoose.set('useFindAndModify', false);
         mongoose.Promise = global.Promise;
 
@@ -20,7 +20,7 @@ module.exports = {
         });
 
         mongoose.connection.on('err', err => {
-            console.error(`MONGOOSE | Erro na conexão Mongoose:\n${err.stack}`.error);
+            console.error(`MONGOOSE | Ocorreu um erro na conexão Mongoose.`.error + `\n${err.stack}`.warn);
         });
 
         mongoose.connection.on('disconnected', () => {

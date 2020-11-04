@@ -48,7 +48,7 @@ exports.run = async (bot, message, args, settings) => {
         muteChannel.send(autoMod);
     }, ms(muteTime));
 
-    let muteEmbed = new Discord.MessageEmbed().setTitle(`Ação | Mute`).setColor("#faff2b").addField("Usuário mutado", `${toMute} | ${toMute.id}`).addField("Mutado por", `<@${message.author.id}> | ${message.author.id}`).addField("Tempo do mute", `${ms(ms(muteTime))}`).addField("Motivo", `${muteReason}`).setTimestamp();
+    let muteEmbed = new Discord.MessageEmbed().setTitle('Ação | Mute').setColor("#faff2b").addField("Usuário mutado", `${toMute} | ${toMute.id}`).addField("Mutado por", `<@${message.author.id}> | ${message.author.id}`).addField("Tempo do mute", `${ms(ms(muteTime))}`).addField("Motivo", `${muteReason}`).setTimestamp();
     muteChannel.send(muteEmbed);
 
 };

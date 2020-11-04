@@ -29,7 +29,6 @@ module.exports = bot => {
     //<----------------//
     //: Guild Profile ://
     //---------------->//
-    bot.config = require('../config');
     bot.getGuild = async guild => {
         let data = await Guild.findOne({ guildID: guild.id });
         if (data) return data;
@@ -76,9 +75,12 @@ module.exports = bot => {
     bot.createProfile = async profile => {
         const merged = Object.assign({ _id: mongoose.Types.ObjectId() }, profile);
 
-        const newProfile = await new Profile(merged);
-        bot.updateLog(`Novo perfil de usuário criado para \`\`${merged.userID}\`\`, na guild \`\`${merged.guildID}\`\``);
-        return newProfile.save().then(console.log(`PERFIL > USUÁRIO | Novo perfil salvo para "${merged.userID}", na guild "${merged.guildID}"`.updated));
+        try {
+            const newProfile = await new Profile(merged);
+            return newProfile.save().then(console.log(`PERFIL > USUÁRIO | Novo perfil salvo para "${merged.userID}", na guild "${merged.guildID}"`.updated));
+        } catch (e) {
+            return console.error(`PERFIL > USUÁRIO | Não foi possivel criar um perfil de usuário.\n`.err + `${e}`.warn);
+        }
     };
 
     bot.getProfile = async (user, extraData) => {
@@ -86,11 +88,13 @@ module.exports = bot => {
         if (extraData) {
             if (typeof(extraData) != 'boolean') return;
             Profile.findOne({ userID: user.id }).then(async result => {
-                return result;
+                return console.log(result);
             });
         }
         if (data) return data;
-        else return;
+        else {
+            bot.createProfile({ userID: user.id, userWarnings: { warningsTotal: 0, warningsDetail: [], }, isBlacklisted: false });
+        }
     };
 
     bot.updateProfile = async (user, data) => {
@@ -118,47 +122,28 @@ module.exports = bot => {
             return console.log(`PERFIL > USUÁRIO | Perfil ${user.id} excluido da DB com sucesso!`.updated);
         }
     };
+
+    bot.updateCoins = async (bot, member, amount) => {
+        const profile = await bot.getProfile(member);
+        const newAmount = profile ? profile.coins + amount : amount;
+        await bot.updateProfile(member, { coins: newAmount, experience: newAmount + 2, experienceTotal: newAmount + 2 }); ///////////////' #botFunctions :updateProfile '//
+        if (profile.experience >= profile.toNextLevel) {
+            await bot.updateProfile(member, { level: profile.level += 1, experience: profile.experience - profile.toNextLevel, toNextLevel: Math.floor((profile.toNextLevel + 35)) });
+            console.log(`LEVEL | Membro ${profile.userID} passou para o nível ${profile.level}! A próxima meta é ${profile.toNextLevel}.`.warn);
+        }
+    };
     //<-------//
     //: Logs ://
     //------->//
-    bot.getLatestLog = async () => {
-        let lastMessage;
-        if (bot.mainLogChannel) {
-            if (bot.mainLogChannel.lastMessage) {
-                lastMessage = bot.mainLogChannel.lastMessage;
-            } else {
-                lastMessage = undefined;
-            }
-        }
-        if (!bot.mainLogChannel.deleted) {
-            if (!lastMessage || lastMessage == undefined) {
-                console.error(`LOG | Falha ao obter um log. Não existem logs para obter.`.error);
-                return messages.fail.messageDontExist;
-            } else {
-                return lastMessage;
-            }
-        } else {
-            console.error(`LOG | Falha ao obter um log. O canal especificado não existe.`.error);
-            return messages.fail.channelDontExist;
-        }
-    };
-
+    let lastMessage;
     bot.makeLog = async logString => {
-        let lastMessage;
-        if (bot.mainLogChannel) {
-            if (bot.mainLogChannel.lastMessage) {
-                lastMessage = bot.mainLogChannel.lastMessage;
-            } else {
-                lastMessage = undefined;
-            }
-        }
         if (!logString || logString.length < 1) {
             console.error(`LOG | Falha ao postar um novo log. Mensagem para postar estava vazia.`.error);
             return messages.fail.logStringEmpty;
         }
         if (!bot.mainLogChannel.deleted) {
             bot.mainLogChannel.send(logString + ` [${moment(Date.now()).format('LT')}]`);
-            await console.log(`LOG | Uma nova log foi postada com sucesso! ID: ${lastMessage.id}`.warn);
+            console.log(`LOG | Uma nova log foi postada com sucesso! ID: ${lastMessage.id}`.warn);
             return messages.success.logSended;
         } else {
             console.error(`LOG | Falha ao postar um novo log. O canal especificado não existe.`.error);
@@ -167,12 +152,9 @@ module.exports = bot => {
     };
 
     bot.updateLog = async (logString,updateReason,logIDOptional) => {
-        let lastMessage;
         if (bot.mainLogChannel) {
             if (bot.mainLogChannel.lastMessage) {
                 lastMessage = bot.mainLogChannel.lastMessage;
-            } else {
-                lastMessage = undefined;
             }
         }
         if (!logString || logString.length < 1) {
@@ -189,7 +171,6 @@ module.exports = bot => {
                 console.error(`LOG | Falha ao editar um log. Não existem logs para editar.`.error);
                 return messages.fail.messageDontExist;
             } else {
-                console.log(`LOG | Log editado com sucesso! ID: ${lastMessage.id}`.warn);
                 if (lastMessage.length > 1000) {
                     console.warn(`LOG | Log ${lastMessage.id} ultrapassou 1000 caractéres, postando um novo log...`);
                     bot.makeLog(logString);
@@ -203,48 +184,17 @@ module.exports = bot => {
                 console.error(`LOG | Falha ao editar um log. A mensagem especificada não existe. ID providenciado: ${logIDOptional}`.error);
                 return messages.fail.messageDontExist;
             } else {
-                console.log(`LOG | Log editado com sucesso! ID: ${logIDOptional}`.warn);
                 bot.mainLogChannel.messages.cache.get(logIDOptional).edit(bot.mainLogChannel.messages.cache.get(logIDOptional).content + '\n' + logString + ` [${moment(Date.now()).format('LT')}]`,updateReason);
                 return messages.success.logEdited;
-            }
-        }
-    };
-
-    bot.deleteLog = async logIDOptional => {
-        let lastMessage;
-        if (bot.mainLogChannel) {
-            if (bot.mainLogChannel.lastMessage) {
-                lastMessage = bot.mainLogChannel.lastMessage;
-            } else {
-                lastMessage = undefined;
-            }
-        }
-        if (!logIDOptional || typeof(logIDOptional) !== 'string') {
-            if (!lastMessage) {
-                console.error(`LOG | Falha ao deletar um log. Não existem logs para deletar.`.error);
-                return messages.fail.messageDontExist;
-            } else {
-                console.log(`LOG | Log deletado com sucesso! ID: ${lastMessage.id}`.warn);
-                lastMessage.delete();
-                return messages.success.logDeleted;
-            }
-        } else {
-            if (!bot.mainLogChannel.messages.cache.get(logIDOptional)) {
-                console.error(`LOG | Falha ao deletar um log. A mensagem especificada não existe. ID providenciado: ${logIDOptional}`.error);
-                return messages.fail.messageDontExist;
-            } else {
-                console.log(`LOG | Log deletado com sucesso! ID: ${logIDOptional}`.warn);
-                bot.mainLogChannel.messages.cache.get(logIDOptional).delete();
-                return messages.success.logDeleted;
             }
         }
     };
     //<-------//
     //: Util ://
     //------->//
-    bot.guildAvailable = async guild => {
-        if (!guild || typeof(guild != 'string')) {
-            console.error(`ERRO | Falha ao obter a disponibilidade de uma guild. Guild fornecida não existe ou não pode ser encontrada.`.error);
+    bot.guildAvailable = guild => {
+        if (!guild) {
+            console.error(`GUILD | Falha ao obter a disponibilidade de uma guild. Guild fornecida não existe ou não pode ser encontrada.`.error);
             return messages.fail.guildDontExist;
         }
         const available = guild.available;
@@ -254,28 +204,28 @@ module.exports = bot => {
 
     bot.isOwner = async user => {
         let userID = user.id;
-        switch (bot.owners.includes(userID)) {
-            case true:
-            return true;
-            case false:
-            return false;
+        let profile = await bot.getBotProfile();
+        if (await profile.owners.includes(userID)) return true;
+        else return false;
+    };
+
+    bot.getBotProfile = async () => {
+        let data = await Bot.findOne({ _id: mongoose.Types.ObjectId('5f08b4497586a91384c1e434') });
+        if (data) return data;
+        else {
+            try {
+                const newProfile = await new Bot({
+                    _id: mongoose.Types.ObjectId(),
+                    commandUsageCount: 0,
+                    changelogs: [],
+                    owners: ['303235142283952128', '630456490540400703'],
+                    devs: [],
+                });
+                await newProfile.save().then(result => { return result; });
+            } catch (e) {
+                console.error(`PERFIL > BOT | Falha ao tentar criar o perfil do bot.`.error + `\n${e}`.warn);
+            }
         }
-    };
-
-    bot.updateCoins = async (bot, member, amount) => {
-        const profile = await bot.getProfile(member); ////////////////////////' #botFunctions :getProfile '/////
-        const newAmount = profile ? profile.coins + amount : amount; /////////' User coins value '//////////////
-        await bot.updateProfile(member, { coins: newAmount, experience: newAmount + 2, experienceTotal: newAmount + 2 }); ///////////////' #botFunctions :updateProfile '//
-    };
-
-    // Tentar fazer uma função para loja, compras de coisas, passar de nível, e etc amanhã.
-    // Pensar melhor amanhã.
-
-    bot.getBotProfile = () => {
-        Bot.findOne({ _id: '5e969f521e939a11ac13871b' }).then(async Result => {
-            if (!Result || Result == null || Result == undefined) return console.error(`PERFIL > BOT | Falha ao obter o perfil do bot. Nenhum resultado foi encontrado.`.error);
-            return Result;
-        });
     };
 
     bot.newChangelog = async changelogString => {
@@ -319,6 +269,11 @@ module.exports = bot => {
     //     }
     // };
 
+    bot.increaseCommandCount = async () => {
+        let profile = await bot.getBotProfile();
+        return await profile.updateOne({ commandUsageCount: profile.commandUsageCount + 1 });
+    };
+
     bot.updateActivity = async (text,activityTypeOptional) => {
         if (!text || typeof(text) !== 'string' || text.length < 1) {
             console.error(`BOT > ATIVIDADE | Falha ao atualizar a atividade do bot. Texto fornecido estava incorreto.`.error);
@@ -341,14 +296,26 @@ module.exports = bot => {
                 bot.user.setActivity(text);
                 break;
         }
-        console.log(`BOT > ATIVIDADE | Atividade do bot atualizada! Nova atividade: ${text}`.loaded);
         bot.updateLog(`Atividade do bot alterada. Nova atividade: ${text}`);
         return messages.success.activityUpdated;
     };
 
-    bot.refreshFunctions = () => {
-        delete require.cache[require.resolve(`./botFunctions.js`)];
-        return messages.success.functionsRestarted;
+    bot.getSharedServers = async member => {
+        let serverCount = 0;
+        let guilds = [];
+        try {
+            bot.guilds.cache.forEach(guild => {
+                if (guild.members.cache.get(member.id)) {
+                    serverCount++;
+                    guilds.push(guild);
+                }
+            });
+            if (serverCount <= 1) return 'Esse usuário não tem nenhum servidor em comum.';
+            return guilds;
+        } catch (e) {
+            console.error(`USUÁRIO | Ocorreu um erro ao tentar obter os servidores em comum com "${member.id}".`.error + `\n${e}`.warn);
+            return messages.fail.userDontExist;
+        }
     };
 
     bot.clean = text => {

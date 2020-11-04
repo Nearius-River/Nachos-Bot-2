@@ -6,8 +6,6 @@ const botSchema = mongoose.Schema({
     changelogs: [],
     owners: [],
     devs: [],
-    botID: String,
-    botPresenceMessage: []
 });
 
 module.exports = mongoose.model('Bot', botSchema);

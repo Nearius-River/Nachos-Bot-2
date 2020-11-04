@@ -13,9 +13,10 @@ exports.run = async (bot, message, args, settings) => {
             embed.setColor('#9BAAB4');
         } else embed.setColor(message.member.displayHexColor);
         embed.addField('Nome', `${message.author.tag} | ${message.author.id}`);
-        embed.addField('Conta criada em', moment(message.author.createdAt).format('lll'));
-        embed.addField('Entrou no servidor em', moment(message.member.joinedAt).format('lll'));
+        embed.addField('Conta criada em', moment(message.author.createdAt).format('lll'), true);
+        embed.addField('Entrou no servidor em', moment(message.member.joinedAt).format('lll'), true);
         embed.addField('Última mensagem enviada', message.author.lastMessage);
+
     } else {
         embed.setAuthor(user.user.tag, user.user.displayAvatarURL());
         embed.setThumbnail(user.user.displayAvatarURL());
@@ -23,9 +24,9 @@ exports.run = async (bot, message, args, settings) => {
             embed.setColor('#9BAAB4');
         } else embed.setColor(user.displayHexColor);
         embed.addField('Nome', `${user.user.tag} | ${user.user.id}`);
-        embed.addField('Conta criada em', moment(user.user.createdAt).format('lll'));
-        embed.addField('Entrou no servidor em', moment(user.joinedAt).format('lll'));
-		if (user.user.lastMessage == null) embed.addField('Última mensagem enviada', 'Não foi possível encontrar nenhuma mensagem :/');
+        embed.addField('Conta criada em', moment(user.user.createdAt).format('lll'), true);
+        embed.addField('Entrou no servidor em', moment(user.joinedAt).format('lll'), true);
+        if (user.user.lastMessage == null) embed.addField('Última mensagem enviada', 'Não foi possível encontrar nenhuma mensagem :/');
         else embed.addField('Última mensagem enviada', user.user.lastMessage);
     }
 

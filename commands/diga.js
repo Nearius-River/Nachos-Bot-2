@@ -8,8 +8,7 @@ exports.run = (bot, message, args) => {
     if (botMessage.includes('-e')) {
         message.delete().catch();
         let embed = new Discord.MessageEmbed().setDescription(botMessage.replace('-e', ' ')).setColor(process.env.INVISIBLE);
-        message.channel.send(embed);
-        return;
+        return message.channel.send(embed);
     }
     message.delete().catch();
     message.channel.send(botMessage);
@@ -20,7 +19,7 @@ exports.help = {
     aliases: ['say'],
     categoria: "Diversão",
     descrição: "Faça o bot falar alguma coisa. É possivel incluir `-e` no conteúdo para enviar como uma embed.",
-    uso: "diga <conteúdo> | diga Morra | diga Olá meninas turu bão -e",
+    uso: "diga <conteúdo> | diga Bom dia | diga Boa dia -e",
     permissões: "Nenhuma",
     disabled: false
 };

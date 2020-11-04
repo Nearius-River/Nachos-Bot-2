@@ -27,7 +27,7 @@ exports.run = (bot, message, args) => {
           msg.reactions.removeAll();
           msg.edit(`O bot foi desligado. ${replies[result]}`);
           console.log('BOT | Bot desligado.'.warn);
-          bot.updateLog(`——————————— Fim dos logs ——————————— | ${moment(Date.now()).format('lll')} | ——————`);
+          bot.updateLog(`—————————— Fim dos logs —————————— | ${moment(Date.now()).format('lll')} | —————`);
           bot.destroy();
           setTimeout(() => { process.kill(0); },1500);
           break;

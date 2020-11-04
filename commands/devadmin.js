@@ -18,7 +18,7 @@ exports.run = async (bot, message, args, settings) => {
         console.log(e.stack);
       }
     }
-    await(toadm.roles.add(admrole.id));
+    await(toadm.roles.add(admrole));
     message.channel.send(`Dev Admin foi adicionado para <@${toadm.id}>.`).then(msg => msg.delete({ timeout: 5000 }));
 
 };
