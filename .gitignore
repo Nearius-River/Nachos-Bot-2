@@ -1,8 +1,6 @@
 useful.txt
-.env
 .eslintrc.json
 .vscode
-mongoose.js
 desktop.ini
 startup.bat
 node_modules
