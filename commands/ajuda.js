@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const { chmodSync } = require('fs-extra');
 
 exports.run = async (bot, message, args) => {
     let embed = new Discord.MessageEmbed();

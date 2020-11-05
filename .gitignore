@@ -1,6 +1,6 @@
 useful.txt
 .eslintrc.json
 .vscode
-desktop.ini
 startup.bat
 node_modules
+utils/mongoose.js
