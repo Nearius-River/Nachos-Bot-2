@@ -11,7 +11,7 @@ module.exports = {
             family: 4
         };
 
-        //# Note: password is hidden for GitHub #//
+        //# Note: I actually had to change my password, sorry for my dumbness #//
         mongoose.connect('mongodb+srv://nearius-river:**************@cluster0-wl6m6.mongodb.net/nachos?retryWrites=true&w=majority', dbOptions);
         mongoose.set('useFindAndModify', false);
         mongoose.Promise = global.Promise;
