@@ -6,7 +6,7 @@ const packages = require('../package.json');
 exports.run = async (bot, message, args, settings) => {
     const embed = new Discord.MessageEmbed()
     .setAuthor('Nachos Bot | Informações', bot.user.displayAvatarURL())
-    .setColor(process.env.INVISIBLE)
+    .setColor(bot.defaults.mainSettings.invisibleColor)
     .addField('Geral', `**${bot.guilds.cache.size}** Servidores\n**${bot.users.cache.size}** Usuários\n**${bot.channels.cache.size}** Canais`, true)
     .addField('Créditos', `**Pixel**\n**TheSourceCode**`, true)
     .addField('Links', `**[Convidar o bot](https://discordapp.com/oauth2/authorize?&client_id=547967082952785933&permissions=0&scope=bot)**\n**[Servidor de desenvolvimento](https://discord.gg/nkd2d7f)**`, true)

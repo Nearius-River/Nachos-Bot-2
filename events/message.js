@@ -28,12 +28,28 @@ module.exports = async (bot, message) => {
 
     if (message.content.indexOf(settings.prefix) !== 0) return; //' If message don't starts with the prefix, return nothing '//
     let args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
-    let member =
-    message.mentions.members.first() ||
-    message.guild.members.cache.find(u => u.id == args[0]) ||
-    message.guild.members.cache.find(u => u.user.tag == args[0]) ||
-    message.guild.members.cache.find(u => args[0].includes(u.username)) ||
-    message.member;
+
+    async function getGuildValue(valueToReturn, argsValue) {
+        if (valueToReturn == 'member') {
+            let member =
+            message.mentions.members.first() ||
+            message.guild.members.cache.find(m => m.id == argsValue) ||
+            message.guild.members.cache.find(m => m.user.username.includes(argsValue));
+
+            if (!member || member == undefined) { member = message.member; }
+            return member;
+        } else if (valueToReturn == 'role') {
+            let role =
+            message.mentions.roles.first() ||
+            message.guild.roles.cache.find(r => r.name.includes(role)) ||
+            message.guild.roles.cache.find(r => r.id == role);
+
+            if (!role || role == undefined) { return message.channel.send('Cargo não encontrado.'); }
+            return role;
+        } else {
+            return console.log('Valor para retornar inválido.');
+        }
+    }
 
     let commandName = args.shift().toLowerCase();
     let cmd;
@@ -49,7 +65,7 @@ module.exports = async (bot, message) => {
     if (userProfile ? userProfile.isBlacklisted : true) return; //' If message author is blacklisted, return nothing '//
 
     try {
-        cmd.run(bot, message, args, settings, member); //' Executes the command '//
+        cmd.run(bot, message, args, settings, getGuildValue); //' Executes the command '//
         bot.increaseCommandCount();
 		bot.updateLog('Comando usado -> ' + commandName + ', usado por ' + message.member.nickname);
     } catch (e) {
@@ -69,8 +85,4 @@ module.exports = async (bot, message) => {
             console.error(`PERFIL > USUÁRIO | Ocorreu um erro ao tentar atualizar os valores de "${message.author.id}".\n`.error + `${e}`.warn);
         }
     } //' If messageCheck is equals or greater than 2 and equals or less than 3, call function #updateCoins '//
-
-    module.exports.objects = {
-        member: member
-    };
 };

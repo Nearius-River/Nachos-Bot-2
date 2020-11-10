@@ -32,7 +32,7 @@ module.exports = bot => {
     bot.getGuild = async guild => {
         let data = await Guild.findOne({ guildID: guild.id });
         if (data) return data;
-        else return bot.config.defaultSettings;
+        else return bot.defaults.mainGuildSettings;
     };
 
     bot.updateGuild = async (guild, settings) => {
@@ -49,7 +49,7 @@ module.exports = bot => {
     };
 
     bot.createGuild = async settings => {
-        let defaults = Object.assign({ _id: mongoose.Types.ObjectId() }, bot.config.defaultSettings);
+        let defaults = Object.assign({ _id: mongoose.Types.ObjectId() }, bot.defaults.mainGuildSettings);
         let merged = Object.assign(defaults, settings);
 
         const newGuild = await new Guild(merged);
@@ -151,40 +151,37 @@ module.exports = bot => {
         }
     };
 
-    bot.updateLog = async (logString,updateReason,logIDOptional) => {
+    bot.updateLog = async (logString, supressDateStamp) => {
         if (bot.mainLogChannel) {
             if (bot.mainLogChannel.lastMessage) {
                 lastMessage = bot.mainLogChannel.lastMessage;
             }
         }
+
         if (!logString || logString.length < 1) {
             console.error(`LOG | Falha ao editar um log. Mensagem para postar estava vazia.`.error);
             return messages.fail.logStringEmpty;
         }
+
         if (logString.length > 1000) {
             console.error(`LOG | Falha ao editar um log. Mensagem para postar ultrapassou o limite de caractéres.`.error);
             return messages.fail.characterLimit;
         }
-        if (!updateReason) { updateReason = 'Motivo não especificado'; }
-        if (!logIDOptional || typeof(logIDOptional) !== 'string') {
-            if (!lastMessage) {
-                console.error(`LOG | Falha ao editar um log. Não existem logs para editar.`.error);
-                return messages.fail.messageDontExist;
-            } else {
-                if (lastMessage.length > 1000) {
-                    console.warn(`LOG | Log ${lastMessage.id} ultrapassou 1000 caractéres, postando um novo log...`);
-                    bot.makeLog(logString);
-                    return messages.success.logSended;
-                }
-                lastMessage.edit(lastMessage.content + '\n' + logString + ` [${moment(Date.now()).format('LT')}]`,updateReason);
-                return messages.success.logEdited;
-            }
+
+        if (!lastMessage) {
+            console.error(`LOG | Falha ao editar um log. Não existem logs para editar.`.error);
+            return messages.fail.messageDontExist;
         } else {
-            if (!bot.mainLogChannel.messages.cache.get(logIDOptional)) {
-                console.error(`LOG | Falha ao editar um log. A mensagem especificada não existe. ID providenciado: ${logIDOptional}`.error);
-                return messages.fail.messageDontExist;
+            if (lastMessage.length > 1000) {
+                console.warn(`LOG | Log ${lastMessage.id} ultrapassou 1000 caractéres, postando um novo log...`);
+                bot.makeLog(logString);
+                return messages.success.logSended;
+            }
+            if (supressDateStamp == true) {
+                lastMessage.edit(lastMessage.content + '\n' + logString);
+                return messages.success.logEdited;
             } else {
-                bot.mainLogChannel.messages.cache.get(logIDOptional).edit(bot.mainLogChannel.messages.cache.get(logIDOptional).content + '\n' + logString + ` [${moment(Date.now()).format('LT')}]`,updateReason);
+                lastMessage.edit(lastMessage.content + '\n' + logString, `[${moment(Date.now()).format('LT')}]`);
                 return messages.success.logEdited;
             }
         }
@@ -281,20 +278,20 @@ module.exports = bot => {
         }
         switch (activityTypeOptional) {
             case 1:
-                bot.user.setActivity(text, { type: 'PLAYING' });
-                break;
+            bot.user.setActivity(text, { type: 'PLAYING' });
+            break;
             case 2:
-                bot.user.setActivity(text, { type: 'STREAMING' });
-                break;
+            bot.user.setActivity(text, { type: 'STREAMING' });
+            break;
             case 3:
-                bot.user.setActivity(text, { type: 'LISTENING' });
-                break;
+            bot.user.setActivity(text, { type: 'LISTENING' });
+            break;
             case 4:
-                bot.user.setActivity(text, { type: 'WATCHING' });
-                break;
+            bot.user.setActivity(text, { type: 'WATCHING' });
+            break;
             default:
-                bot.user.setActivity(text);
-                break;
+            bot.user.setActivity(text);
+            break;
         }
         bot.updateLog(`Atividade do bot alterada. Nova atividade: ${text}`);
         return messages.success.activityUpdated;

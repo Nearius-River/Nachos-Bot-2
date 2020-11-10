@@ -75,7 +75,7 @@ exports.run = async (bot, message, args, settings) => {
     const Filter = (Reaction, user) => Reactions.includes(Reaction.emoji.name) && user.id == message.author.id;
 
     let roleEmbed = new Discord.MessageEmbed()
-    .setColor(process.env.INVISIBLE)
+    .setColor(bot.defaults.mainSettings.invisibleColor)
     .setTitle(`Total de cargos: ${message.guild.roles.cache.size - 1}`)
     .setDescription(Roles);
 

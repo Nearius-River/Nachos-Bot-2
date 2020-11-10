@@ -7,7 +7,7 @@ exports.run = async (bot, message, args) => {
 	.setFooter('Clique na reação em 60 segundos para deletar se for preciso.');
 
     const code = args.join(" ");
-    if (['bot.token', 'process.env.token', 'token'].includes(code)) return message.channel.send('Achou que seria tão fácil assim?');
+    if (['bot.token', 'bot.defaults.botToken', 'token'].includes(code)) return message.channel.send('Achou que seria tão fácil assim?');
 
     const Reactions = ['❌'];
     const Filter = (reaction, user) => Reactions.includes(reaction.emoji.name) && user.id == message.author.id;

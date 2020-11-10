@@ -7,7 +7,7 @@ exports.run = (bot, message, args) => {
     if (botMessage.includes("@here")) return message.channel.send("Você não pode mencionar everyone ou here nas mensagens.");
     if (botMessage.includes('-e')) {
         message.delete().catch();
-        let embed = new Discord.MessageEmbed().setDescription(botMessage.replace('-e', ' ')).setColor(process.env.INVISIBLE);
+        let embed = new Discord.MessageEmbed().setDescription(botMessage.replace('-e', ' ')).setColor(bot.defaults.mainSettings.invisibleColor);
         return message.channel.send(embed);
     }
     message.delete().catch();

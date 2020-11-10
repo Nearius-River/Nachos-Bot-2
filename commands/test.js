@@ -1,6 +1,6 @@
-exports.run = async (bot, message, args, settings, member) => {
-    let profile = await bot.getBotProfile();
-    console.log(`Donos > ${profile.owners}`);
+exports.run = async (bot, message, args, settings, getGuildValue) => {
+    let member = getGuildValue('member', args.join(' '));
+    message.channel.send('Obteve', member.user.id, '(', member.user.username, ')');
 };
 
 exports.command = {

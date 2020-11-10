@@ -15,7 +15,7 @@ exports.run = async (bot, message, args) => {
     //# This thing won't work unless I do this #//
     commandUsage = commandUsage.replace('<', '`<');
     commandUsage = commandUsage.replace('>', '>`');
-    commandUsage = commandUsage.replace('[', '´[`');
+    commandUsage = commandUsage.replace('[', '`[');
     commandUsage = commandUsage.replace(']', ']`');
 
     embed.addField('Descrição', commandDescription);
@@ -91,6 +91,7 @@ exports.run = async (bot, message, args) => {
 
 exports.command = {
     aliases: ['help'],
+    commandPermissions: [],
     commandCategory: {
         administration: false,
         information: true,

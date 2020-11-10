@@ -9,7 +9,7 @@ exports.run = (bot, message, args) => {
     let musicCmds = bot.commands.music;
 
     MessageEmbed.setAuthor('Lista de comandos', 'https://cdn.discordapp.com/attachments/587108839707508738/597617316704026634/cmdsimage.png');
-    MessageEmbed.setColor(process.env.MAINCOLOR);
+    MessageEmbed.setColor(bot.defaults.mainSettings.mainColor);
     MessageEmbed.addField('Administração', `\`\`${administrationCmds.map((undefined, name) => {return name;}).join(', ')}\`\``, true);
     MessageEmbed.addField('Informação', `\`\`${infoCmds.map((undefined, name) => {return name;}).join(', ')}\`\``, true);
     MessageEmbed.addField('Economia', `\`\`${economyCmds.map((undefined, name) => {return name;}).join(', ')}\`\``);

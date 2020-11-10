@@ -4,7 +4,7 @@ exports.run = (bot, message, args, settings) => {
     let toKick = message.mentions.members.first() || message.guild.members.cache.find(u => u.user.id === args[0]) || message.guild.members.cache.find(u => u.user.username === args[0]) || message.guild.members.cache.find(u => `${u.user.username}#${u.user.discriminator}` === args[0]);
     if (!toKick) return message.channel.send('Não foi possível encontrar o usuário!');
     if (toKick.id === "547967082952785933") return message.channel.send("Você tenta kickar o bot! É ineficaz!");
-    if (toKick.id === process.env.OWNER) return message.channel.send("Você não pode; ele é forte demais para você.");
+    if (toKick.id === bot.defaults.botOwner) return message.channel.send("Você não pode; ele é forte demais para você.");
     if (toKick.permissions.has('MANAGE_GUILD')) return message.channel.send('Uhh você não pode kickar esse usuário.');
     if (!message.member.permissions.has('MANAGE_GUILD')) return message.channel.send('Uhh você precisa de permissão administrativa ou gerenciar servidor.');
     let kickReason = args.slice(1).join();

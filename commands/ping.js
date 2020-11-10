@@ -4,7 +4,7 @@ exports.run = (bot, message, args) => {
 
     const resultEmbed = new MessageEmbed()
     //.setTitle(replies[result])
-    .setColor(process.env.INVISIBLE)
+    .setColor(bot.defaults.mainSettings.invisibleColor)
     .addField(`Ping atual`, `Aproximadamente **${Math.floor(bot.ping)}** milisegundos`)
     .addField(`Pings anteriormente`, bot.pings.join(', '))
     .setTimestamp();
