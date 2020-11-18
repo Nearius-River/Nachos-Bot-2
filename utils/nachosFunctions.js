@@ -137,6 +137,8 @@ module.exports = bot => {
     //------->//
     let lastMessage;
     bot.makeLog = async logString => {
+        const disabled = true;
+        if (disabled == true) return; //temporary
         if (!logString || logString.length < 1) {
             console.error(`LOG | Falha ao postar um novo log. Mensagem para postar estava vazia.`.error);
             return messages.fail.logStringEmpty;
@@ -152,6 +154,8 @@ module.exports = bot => {
     };
 
     bot.updateLog = async (logString, supressDateStamp) => {
+        const disabled = true;
+        if (disabled == true) return; //temporary
         if (bot.mainLogChannel) {
             if (bot.mainLogChannel.lastMessage) {
                 lastMessage = bot.mainLogChannel.lastMessage;
@@ -190,7 +194,7 @@ module.exports = bot => {
     //: Util ://
     //------->//
     bot.guildAvailable = guild => {
-        if (!guild) {
+        if (!guild || guild == undefined) {
             console.error(`GUILD | Falha ao obter a disponibilidade de uma guild. Guild fornecida não existe ou não pode ser encontrada.`.error);
             return messages.fail.guildDontExist;
         }
@@ -199,11 +203,20 @@ module.exports = bot => {
         else return true;
     };
 
-    bot.isOwner = async user => {
-        let userID = user.id;
+    bot.memberIs = async (member, typeOfStatus) => {
+        typeOfStatus = typeOfStatus.toLowerCase();
+        let userID = member.user.id;
         let profile = await bot.getBotProfile();
-        if (await profile.owners.includes(userID)) return true;
-        else return false;
+
+        switch (typeOfStatus) {
+            case 'owner':
+                if (profile.owners.includes(userID)) return true;
+                else return false;
+            case 'developer':
+                if (profile.owners.includes(userID)) return true;
+                if (profile.devs.includes(userID)) return true;
+                else return false;
+        }
     };
 
     bot.getBotProfile = async () => {
@@ -231,40 +244,40 @@ module.exports = bot => {
             return messages.fail.textIncorrect;
         }
 
-        const profile = bot.getBotProfile();
+        const profile = await bot.getBotProfile();
         await profile.changelogs.push(moment(Date.now()).format('ll') + ' às ' + moment(Date.now()).format('LT') + `\n${changelogString}`);
         console.log(`PERFIL > BOT | Sucesso ao adicionar um changelog à DB!`.ready);
-        bot.updateLog(`Novo changelog adicionado à DB: ${changelogString}`);
+        return true;
     };
 
-    // bot.getChangelog = async numberOptional => {
-    //     const profile = bot.getBotProfile();
-    //     const changelogs = profile.changelogs;
+    bot.getChangelog = async numberOptional => {
+        const profile = await bot.getBotProfile();
+        const changelogs = profile.changelogs;
 
-    //     if (changelogs.length < 1) {
-    //         console.log(`PERFIL > BOT | Falha ao obter os changelogs. Tenha certeza que a array não está vazio.`.error);
-    //         return messages.fail.arrayEmpty;
-    //     }
+        if (changelogs.length < 1) {
+            console.log(`PERFIL > BOT | Falha ao obter os changelogs. Tenha certeza que a array não está vazio.`.error);
+            return messages.fail.arrayEmpty;
+        }
 
-    //     switch (numberOptional) {
-    //         case typeof(numStringOptional) == 'number':
-    //             if (!changelogs[numberOptional - 1]) {
-    //                 console.log(`PERFIL > BOT | Falha ao obter os changelogs. Tenha certeza que forneceu um valor no alcance.`);
-    //                 return messages.fail.arrayOutOfRange;
-    //             } else {
-    //                 console.log(`PERFIL > BOT | Sucesso ao obter um changelog!`);
-    //                 return changelogs[numberOptional - 1];
-    //             }
-    //         default:
-    //             if (!changelogs[changelogs.length - 1]) {
-    //                 console.log(`PERFIL > BOT | Falha ao obter os changelogs. Tenha certeza que existem valores definidos.`);
-    //                 return messages.fail.arrayEmpty;
-    //             } else {
-    //                 console.log(`PERFIL > BOT | Sucesso ao obter um changelog!`);
-    //                 return changelogs[changelogs.length - 1];
-    //             }
-    //     }
-    // };
+        switch (numberOptional) {
+            case typeof(numStringOptional) == 'number':
+                if (!changelogs[numberOptional]) {
+                    console.log(`PERFIL > BOT | Falha ao obter os changelogs. Tenha certeza que forneceu um valor no alcance.`);
+                    return messages.fail.arrayOutOfRange;
+                } else {
+                    console.log(`PERFIL > BOT | Sucesso ao obter um changelog!`);
+                    return changelogs[numberOptional];
+                }
+            default:
+                if (!changelogs[changelogs.length]) {
+                    console.log(`PERFIL > BOT | Falha ao obter os changelogs. Tenha certeza que existem valores definidos.`);
+                    return messages.fail.arrayEmpty;
+                } else {
+                    console.log(`PERFIL > BOT | Sucesso ao obter um changelog!`);
+                    return changelogs[changelogs.length];
+                }
+        }
+    };
 
     bot.increaseCommandCount = async () => {
         let profile = await bot.getBotProfile();
@@ -297,7 +310,7 @@ module.exports = bot => {
         return messages.success.activityUpdated;
     };
 
-    bot.getSharedServers = async member => {
+    bot.getSharedServers = member => {
         let serverCount = 0;
         let guilds = [];
         try {

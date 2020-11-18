@@ -1,6 +1,12 @@
 exports.run = async (bot, message, args, settings, getGuildValue) => {
     let member = getGuildValue('member', args.join(' '));
-    message.channel.send('Obteve', member.user.id, '(', member.user.username, ')');
+    bot.memberIs(member, 'owner').then(result => {
+        if (result == true) {
+            message.channel.send('É admin');
+        } else {
+            message.channel.send('Não é admin');
+        }
+    });
 };
 
 exports.command = {

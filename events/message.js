@@ -29,7 +29,7 @@ module.exports = async (bot, message) => {
     if (message.content.indexOf(settings.prefix) !== 0) return; //' If message don't starts with the prefix, return nothing '//
     let args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
 
-    async function getGuildValue(valueToReturn, argsValue) {
+    function getGuildValue(valueToReturn, argsValue) {
         if (valueToReturn == 'member') {
             let member =
             message.mentions.members.first() ||
@@ -47,7 +47,7 @@ module.exports = async (bot, message) => {
             if (!role || role == undefined) { return message.channel.send('Cargo não encontrado.'); }
             return role;
         } else {
-            return console.log('Valor para retornar inválido.');
+            return console.log('MESSAGE | Valor para retornar inválido.');
         }
     }
 

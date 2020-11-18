@@ -1,10 +1,14 @@
-exports.run = async (bot, message, args, settings, member) => {
-    bot.mainServer.channels.cache.get('566654589143744515').disconnect();
+exports.run = async (bot, message, args) => {
+    bot.voice.connections.map(voiceChannel => {
+        if (voiceChannel.channel.members.find(message.guild.me.user.id)) {
+            voiceChannel.disconnect();
+        }
+    });
 };
 
 exports.command = {
     aliases: ['exit'],
-    description: "Desconecta o bot de algum canal, caso esteja em um.",
+    description: "Desconecta o bot de algum canal de voz, caso esteja em um.",
     usage: "",
     commandPermissions: [],
     commandCategory: {

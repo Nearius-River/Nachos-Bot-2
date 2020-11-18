@@ -11,7 +11,7 @@ module.exports = {
             family: 4
         };
 
-        mongoose.connect('mongodb+srv://<username>:<password>@cluster0-wl6m6.mongodb.net/nachos?retryWrites=true&w=majority', dbOptions);
+        mongoose.connect('mongodb+srv://nearius-river:Legal129*2013*@cluster0-wl6m6.mongodb.net/nachos?retryWrites=true&w=majority', dbOptions);
         mongoose.set('useFindAndModify', false);
         mongoose.Promise = global.Promise;
 
@@ -24,7 +24,10 @@ module.exports = {
         });
 
         mongoose.connection.on('disconnected', () => {
-            console.log('MONGOOSE | Conexão Mongoose desestabelecida.'.warn);
+            console.log('MONGOOSE | Conexão Mongoose encerrada.'.warn);
         });
-    }
+    },
+	end: () => {
+		mongoose.connection.close();
+	}
 };

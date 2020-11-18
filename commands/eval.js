@@ -38,7 +38,7 @@ exports.run = async (bot, message, args) => {
 		message.delete();
 		embed.setTitle('Oops, um erro ocorreu!');
 		embed.setDescription(`Entrada:\n\`\`\`${message.content}\`\`\`\nErro:\n\`\`\`js\n${bot.clean(err)}\n\`\`\``);
-        message.channel.send(embed).then(async msg => {
+        return message.channel.send(embed).then(async msg => {
             await msg.react('❌');
 
             msg.awaitReactions(Filter, {

@@ -25,7 +25,8 @@ exports.run = (bot, message, args) => {
           msg.edit(`Conexão encerrada. ${replies[result]}`);
           console.log('BOT | Bot desligado.'.warn);
           bot.updateLog(`—————————— Fim dos logs ——————————— | ${moment(Date.now()).format('lll')} | —————`);
-          bot.setTimeout(function() {
+          bot.mongoose.end();
+		  bot.setTimeout(function() {
             bot.destroy();
             process.kill(0);
           }, 3000);
