@@ -1,7 +1,8 @@
 const bot = require('../app.js');
 const Discord = require('discord.js');
 const fs = require('fs-extra');
-//__filename.slice(51).split('.')[0]
+const chalk = require('chalk');
+
 bot.commands = new Discord.Collection();
 bot.commands.administration = new Discord.Collection();
 bot.commands.information = new Discord.Collection();
@@ -11,7 +12,7 @@ bot.commands.music = new Discord.Collection();
 
 bot.aliases = new Discord.Collection();
 
-module.exports.carregarComandos = () => {
+exports.carregarComandos = () => {
     fs.readdir('./commands', (err, files) => {
         if (err) return console.error(`HANDLER > COMANDOS | Um erro ocorreu ao carregar os comandos.`.error + `\n${err}`.warn);
 
@@ -25,7 +26,7 @@ module.exports.carregarComandos = () => {
                     bot.aliases.set(alias, commandName);
                 });
             }
-            console.log(`COMANDO | Carregado ${file.split('.')[0]}!`.loaded);
+            console.log(chalk.yellow(`COMANDO | Carregado ${commandName}!`));
 
             let cmdCtgr = props.command.commandCategory;
 
@@ -44,7 +45,7 @@ module.exports.carregarComandos = () => {
     });
 };
 
-module.exports.carregarEventos = () => {
+exports.carregarEventos = () => {
     fs.readdir('./events', (err, files) => {
         if (err) return console.error(`HANDLER > EVENTOS | Um erro ocorreu ao carregar os eventos.`.error + `\n${err}`.warn);
 
@@ -53,7 +54,7 @@ module.exports.carregarEventos = () => {
             let evtName = file.split('.')[0];
 
             bot.on(evtName, evt.bind(null, bot));
-            console.log(`EVENTO | Carregado ${evtName}!`.loaded);
+            console.log(chalk.yellow(`EVENTO | Carregado ${evtName}!`));
         });
     });
 };

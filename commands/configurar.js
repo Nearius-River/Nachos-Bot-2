@@ -30,7 +30,7 @@ exports.run = async (bot, message, args, settings) => {
                 try {
                     let channel = message.mentions.channels.first();
                     if (!channel) return message.channel.send('Esse canal não existe :/');
-                    await bot.updateGuild(message.guild, { logsChannel: channel.id });
+                    await bot.updateGuild(message.guild, { channels: { logChannel: channel.id }});
                     return message.channel.send(`Canal de logs definido para: \`${channel.name}\``);
                 } catch (error) {
                     console.error(error);
@@ -38,7 +38,7 @@ exports.run = async (bot, message, args, settings) => {
                 }
             }
 
-            message.channel.send(`Canal de logs: \`${settings.logsChannel}\``);
+            message.channel.send(`Canal de logs: \`${settings.channels.logChannel}\``);
             break;
         }
         case 'reports': {
@@ -46,7 +46,7 @@ exports.run = async (bot, message, args, settings) => {
                 try {
                     let channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
                     if (!channel) return message.channel.send('Esse canal não existe :/');
-                    await bot.updateGuild(message.guild, { reportChannel: channel.id });
+                    await bot.updateGuild(message.guild, { channels: { reportChannel: channel.id }});
                     return message.channel.send(`Canal de denúncias definido para: \`${channel.name}\``);
                 } catch (error) {
                     console.error(error);
@@ -54,7 +54,7 @@ exports.run = async (bot, message, args, settings) => {
                 }
             }
 
-            message.channel.send(`Canal de reports: \`${settings.reportChannel}\``);
+            message.channel.send(`Canal de reports: \`${settings.channels.reportChannel}\``);
             break;
         }
         case 'mod-role': {
@@ -63,7 +63,7 @@ exports.run = async (bot, message, args, settings) => {
                     let role = newSetting;
                     let newRole = message.guild.roles.cache.find(r => r.name === role) || message.guild.roles.cache.find(r => r.id === role);
                     if (!newRole) return message.channel.send('Não foi possivel encontrar o cargo!');
-                    await bot.updateGuild(message.guild, {modRole: newRole.name});
+                    await bot.updateGuild(message.guild, { roles: { modRole: newRole.name }});
                     return message.channel.send(`Cargo de mod definido para: \`${newRole.name}\``);
                 } catch (error) {
                     console.error(error);
@@ -71,7 +71,7 @@ exports.run = async (bot, message, args, settings) => {
                 }
             }
 
-            message.channel.send(`Cargo de mod atual: \`${settings.modRole}\``);
+            message.channel.send(`Cargo de mod atual: \`${settings.roles.modRole}\``);
             break;
         }
         case 'admin-role': {
@@ -80,7 +80,7 @@ exports.run = async (bot, message, args, settings) => {
                     let role = newSetting;
                     let newRole = message.guild.roles.cache.find(r => r.name === role) || message.guild.roles.cache.find(r => r.id === role);
                     if (!newRole) return message.channel.send('Não foi possivel encontrar o cargo!');
-                    await bot.updateGuild(message.guild, {adminRole: newRole.name});
+                    await bot.updateGuild(message.guild, { roles: { adminRole: newRole.name} });
                     return message.channel.send(`Cargo de admin definido para: \`${newRole.name}\``);
                 } catch (error) {
                     console.error(error);
@@ -88,7 +88,7 @@ exports.run = async (bot, message, args, settings) => {
                 }
             }
 
-            message.channel.send(`Cargo de admin atual: \`${settings.adminRole}\``);
+            message.channel.send(`Cargo de admin atual: \`${settings.roles.adminRole}\``);
             break;
         }
         case 'muted-role': {
@@ -97,7 +97,7 @@ exports.run = async (bot, message, args, settings) => {
                     let role = newSetting;
                     let newRole = message.guild.roles.cache.find(r => r.name === role) || message.guild.roles.cache.find(r => r.id === role);
                     if (!newRole) return message.channel.send('Não foi possivel encontrar o cargo!');
-                    await bot.updateGuild(message.guild, {mutedRole: newRole.name});
+                    await bot.updateGuild(message.guild, { roles: { mutedRole: newRole.name }});
                     return message.channel.send(`Cargo de mutes definido para: \`${newRole.name}\``);
                 } catch (error) {
                     console.error(error);
@@ -105,7 +105,7 @@ exports.run = async (bot, message, args, settings) => {
                 }
             }
 
-            message.channel.send(`Cargo de mutes atual: \`${settings.mutedRole}\``);
+            message.channel.send(`Cargo de mutes atual: \`${settings.roles.mutedRole}\``);
             break;
         }
         default: {
@@ -113,11 +113,11 @@ exports.run = async (bot, message, args, settings) => {
 
             subHelpEmbed.setAuthor(`${message.guild.name} | Configurações do bot`, message.guild.iconURL());
             subHelpEmbed.addField('Prefixo do bot', settings.prefix, true);
-            subHelpEmbed.addField('Canal de logs', settings.logsChannel, true);
-            subHelpEmbed.addField('Canal de reports', settings.reportChannel, true);
-            subHelpEmbed.addField('Cargo de moderador', settings.modRole, true);
-            subHelpEmbed.addField('Cargo de administrador', settings.adminRole, true);
-            subHelpEmbed.addField('Cargo de mutes', settings.mutedRole, true);
+            subHelpEmbed.addField('Canal de logs', settings.channels.logChannel, true);
+            subHelpEmbed.addField('Canal de reports', settings.channels.reportChannel, true);
+            subHelpEmbed.addField('Cargo de moderador', settings.roles.modRole, true);
+            subHelpEmbed.addField('Cargo de administrador', settings.roles.adminRole, true);
+            subHelpEmbed.addField('Cargo de mutes', settings.roles.mutedRole, true);
             subHelpEmbed.setColor('GREEN');
             subHelpEmbed.setFooter('Dica: Reaja com o emoji \'?\' para mais informações. Reaja com o emoji \'X\' para redefinir todas as configurações para o padrão.');
             message.channel.send(subHelpEmbed).then(async msg => {
@@ -141,11 +141,11 @@ exports.run = async (bot, message, args, settings) => {
                             msg.reactions.removeAll();
                             try {
                                 await bot.updateGuild(message.guild, { prefix: '*' });
-                                await bot.updateGuild(message.guild, { logsChannel: 'logs' });
-                                await bot.updateGuild(message.guild, { reportChannel: 'reports' });
-                                await bot.updateGuild(message.guild, { modRole: 'Moderador' });
-                                await bot.updateGuild(message.guild, { adminRole: 'Administrador' });
-                                await bot.updateGuild(message.guild, { mutedRole: 'Mutado' });
+                                await bot.updateGuild(message.guild, { channels: { logChannel: 'logs' }});
+                                await bot.updateGuild(message.guild, { channels: { reportChannel: 'reports' }});
+                                await bot.updateGuild(message.guild, { roles: { modRole: 'Moderador' }});
+                                await bot.updateGuild(message.guild, { roles: { adminRole: 'Administrador' }});
+                                await bot.updateGuild(message.guild, { roles: { mutedRole: 'Mutado' }});
                             } catch (error) {
                                 console.error(error);
                                 message.channel.send(`Um erro ocorreu. Reporte para o desenvolvedor: **${error.message}**`);
@@ -162,16 +162,6 @@ exports.run = async (bot, message, args, settings) => {
             break;
         }
     }
-};
-
-exports.help = {
-    name: "configurar",
-    aliases: ['config', 'ajustar'],
-    categoria: "Servidor",
-    descrição: 'Configura aspectos gerais do bot no seu servidor. Para mais informações, digite `configurar`',
-    uso: "configurar <configuração> [nova configuração] | configurar muted-role Mute",
-    permissões: "Gerenciar servidor",
-    disabled: false
 };
 
 exports.command = {

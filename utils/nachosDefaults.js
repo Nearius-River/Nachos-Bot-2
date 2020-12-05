@@ -11,10 +11,18 @@ module.exports = {
 
     mainGuildSettings: {
         prefix: '*',
-        logsChannel: 'logs',
-        reportChannel: 'reports',
-        modRole: 'Moderador',
-        adminRole: 'Administrador',
-        mutedRole: 'Mutado'
+        channels: {
+            logChannel: 'logs',
+            reportChannel: 'reports',
+        },
+        roles: {
+            modRole: 'Moderador',
+            adminRole: 'Administrador',
+            mutedRole: 'Mutado'
+        },
+        memberModeration: {
+            bans: 0,
+            cases: 0,
+        }
     }
 };

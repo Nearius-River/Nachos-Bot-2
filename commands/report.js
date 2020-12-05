@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 
 exports.run = async (bot, message, args, settings, member,) => {
-    let reportChannel = message.guild.channels.cache.find(c => c.id == settings.reportChannel);
+    let reportChannel = message.guild.channels.cache.find(c => c.id == settings.channels.reportChannel);
     if (!reportChannel) {
         await message.delete();
         message.channel.send('Não foi possivel encontrar um canal para denúncias. Contate um administrador.');
@@ -27,7 +27,7 @@ exports.run = async (bot, message, args, settings, member,) => {
     .addField('Motivo', reason)
     .setTimestamp();
 
-    reportChannel.send(reportEmbed);
+    reportChannel.reportChannel.send(reportEmbed);
 };
 
 exports.command = {

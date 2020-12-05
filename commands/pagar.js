@@ -10,15 +10,15 @@ exports.run = async (bot, message, args, settings) => {
 
     Profile.findOne({ userID: user.id }, async (err, files) => {
         if (err) console.error(err);
-        if (!Profile) await bot.createProfile(user);
+        if (!Profile) await bot.createMemberProfile(user);
     });
 
     Profile.findOne({ userID: message.author.id }, async (err, files) => {
         if (err) console.error(err);
-        if (files.coins < parseInt(value)) return message.channel.send('Você não pode enviar mais do que você tem.');
+        if (files.memberEconomy.coins < parseInt(value)) return message.channel.send('Você não pode enviar mais do que você tem.');
 
-        await bot.updateProfile(message.author, { coins: files.coins - parseInt(value)});
-        await bot.updateProfile(user, { depositado: files.coins + parseInt(value)});
+        await bot.updateMemberProfile(message.author, { memberEconomy: { coins: files.memberEconomy.coins - parseInt(value) }});
+        await bot.updateMemberProfile(user, { memberEconomy: { deposit: files.memberEconomy.coins + parseInt(value) }});
 
         if (value == 1) return message.channel.send(`Você enviou 1 real para ${user.username}.`);
         message.channel.send(`Você enviou ${value} reais para ${user.username}.`);

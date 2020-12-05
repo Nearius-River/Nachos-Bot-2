@@ -48,7 +48,7 @@ exports.run = async (bot, message, args, settings) => {
         });
     });
 
-    let banChannel = message.guild.channels.cache.find(c => c.id == settings.logsChannel);
+    let banChannel = message.guild.channels.cache.find(c => c.id == settings.channels.logChannel);
     banChannel.send(banEmbed);
 };
 

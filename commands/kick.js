@@ -48,7 +48,7 @@ exports.run = (bot, message, args, settings) => {
         });
     });
 
-    let kickChannel = message.guild.channels.cache.find(c => c.id == settings.logsChannel);
+    let kickChannel = message.guild.channels.cache.find(c => c.id == settings.channels.logChannel);
     if (!kickChannel) return;
     kickChannel.send(kickEmbed);
 };

@@ -8,10 +8,10 @@ exports.run = async (bot, message, args, settings) => {
 
     Profile.findOne({userID: user.id}, async (err, result) => {
         if (err) console.error(err);
-        if (result.userWarnings.warningsTotal < 1) return message.channel.send('Esse usuário não tem nenhum aviso.');
-        message.channel.send(`Certo! Limpado ${result.userWarnings.warningsTotal.toString()} avisos de ${user.user.username}`);
-        result.userWarnings.warningsTotal = 0;
-        result.userWarnings.warningsDetail = Array;
+        if (result.memberModeration.warningsTotal < 1) return message.channel.send('Esse usuário não tem nenhum aviso.');
+        message.channel.send(`Certo! Limpado ${result.memberModeration.warningsTotal.toString()} avisos de ${user.user.username}`);
+        result.memberModeration.warningsTotal = 0;
+        result.memberModeration.warningsDetail = Array;
         result.save();
     });
 };

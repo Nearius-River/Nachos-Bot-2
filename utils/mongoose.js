@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const chalk = require('chalk');
 
 module.exports = {
     init: () => {
@@ -16,15 +17,15 @@ module.exports = {
         mongoose.Promise = global.Promise;
 
         mongoose.connection.on('connected', () => {
-            console.log('MONGOOSE | Conexão Mongoose estabelecida com sucesso!'.ready);
+            console.log(chalk.white('MONGOOSE | Conexão Mongoose estabelecida com sucesso!'));
         });
 
         mongoose.connection.on('err', err => {
-            console.error(`MONGOOSE | Ocorreu um erro na conexão Mongoose.`.error + `\n${err.stack}`.warn);
+            console.error(chalk.red(`MONGOOSE | Ocorreu um erro na conexão Mongoose.`) + chalk.cyan(`\n${err.stack}`));
         });
 
         mongoose.connection.on('disconnected', () => {
-            console.log('MONGOOSE | Conexão Mongoose encerrada.'.warn);
+            console.log(chalk.cyan('MONGOOSE | Conexão Mongoose encerrada.'));
         });
     },
 	end: () => {

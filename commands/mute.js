@@ -7,14 +7,14 @@ exports.run = async (bot, message, args, settings) => {
     if (toMute.id === "547967082952785933") return message.channel.send("Você tenta mutar o bot! É ineficaz!");
     if (toMute.id === "303235142283952128") return message.channel.send("Você não pode; ele é forte demais para você.");
     if (!message.member.permissions.has("MANAGE_MESSAGES")) return message.channel.send("Uhh você precisa de permissão administrativa ou cargo de mod.");
-    if (toMute.permissions.has("MANAGE_MESSAGES") || toMute.roles.find(r => r.name == settings.modRole)) return message.channel.send("Uhh essa pessoa não pode ser mutada.");
-    let muteRole = message.guild.roles.cache.find(r => r.name === settings.mutedRole);
-    if (toMute.roles.find(r => r.name == settings.mutedRole)) return message.channel.send('Esse usuário já está mutado.');
+    if (toMute.permissions.has("MANAGE_MESSAGES") || toMute.roles.find(r => r.name == settings.roles.modRole)) return message.channel.send("Uhh essa pessoa não pode ser mutada.");
+    let muteRole = message.guild.roles.cache.find(r => r.name === settings.roles.mutedRole);
+    if (toMute.roles.find(r => r.name == settings.roles.mutedRole)) return message.channel.send('Esse usuário já está mutado.');
     if (!muteRole) {
         try {
             muteRole = await message.guild.roles.cache.create({
                 data: {
-                    name: settings.mutedRole,
+                    name: settings.roles.mutedRole,
                     color: "#000000",
                     permissions: []
                 }
@@ -39,7 +39,7 @@ exports.run = async (bot, message, args, settings) => {
 
     await (toMute.roles.add(muteRole.id));
     message.channel.send(`<@${toMute.id}> foi mutado por ${ms(ms(muteTime))}.`);
-    let muteChannel = message.guild.channels.cache.find(c => c.id == settings.logsChannel);
+    let muteChannel = message.guild.channels.cache.find(c => c.id == settings.channels.logChannel);
     if (!muteChannel) return;
     let autoMod = new Discord.MessageEmbed().setTitle("Ação | Unmute").setColor("#317ee0").addField("Usuário desmutado", `${toMute} | ${toMute.id}`).addField("Desmutado por", bot.user.tag);
 

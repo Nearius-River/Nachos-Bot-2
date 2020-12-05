@@ -20,12 +20,12 @@ exports.run = async (bot, message, args) => {
                 case '👋':
                     msg.reactions.removeAll();
                     msg.edit(`Entendido. ${user.user.tag} foi banido para o Shadow Realm.`);
-                    bot.updateProfile(user.user, { isBlacklisted: true });
+                    bot.updateMemberProfile(user.user, { botBlacklist: true });
                     break;
                 case '✌️':
                     msg.reactions.removeAll();
                     msg.edit(`Entendido. ${user.user.tag} foi salvo do Shadow Realm.`);
-                    bot.updateProfile(user.user, { isBlacklisted: false });
+                    bot.updateMemberProfile(user.user, { botBlacklist: false });
                     break;
                 case '😐':
                     msg.reactions.removeAll();

@@ -15,10 +15,10 @@ exports.run = async (bot, message, args, settings) => {
 
     Profile.findOne({userID: user.id}, async (err, result) => {
         if (err) console.error(err);
-        result.userWarnings.warningsTotal += 1;
-        result.userWarnings.warningsDetail.push(`Moderador: ${message.author.tag} | ${moment(message.createdAt).format('MMM, Do')}\n    ${reason}`);
+        result.memberModeration.warningsTotal += 1;
+        result.memberModeration.warningsDetail.push(`Moderador: ${message.author.tag} | ${moment(message.createdAt).format('MMM, Do')}\n    ${reason}`);
         result.save();
-        message.channel.send(`Certo, ${user.user.tag} foi avisado. Esse é o aviso número ${result.userWarnings.warningsTotal.toString()}`);
+        message.channel.send(`Certo, ${user.user.tag} foi avisado. Esse é o aviso número ${result.memberModeration.warningsTotal.toString()}`);
     });
 
     const logEmbed = new MessageEmbed()
@@ -29,7 +29,7 @@ exports.run = async (bot, message, args, settings) => {
     .addField('Motivo', reason)
     .setTimestamp();
 
-    let logChannel = message.guild.channels.cache.find(c => c.id === settings.logsChannel);
+    let logChannel = message.guild.channels.cache.find(c => c.id === settings.channels.logChannel);
     if (!logChannel) return;
     logChannel.send(logEmbed);
 };

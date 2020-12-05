@@ -1,21 +1,18 @@
-const Discord = require('discord.js');
-const { Profile } = require('../models');
+const { isNumber } = require("lodash");
 
-exports.run = async (bot, message, args, settings) => {
-    if (!bot.owners.includes(message.author.id)) return message.channel.send('Apenas o desenvolvedor pode usar esse comando.');
-    let user = message.mentions.members.first() || message.guild.members.cache.find(u => u.user.id === args[0]) || message.guild.members.cache.find(u => u.user.username === args[0]) || message.guild.members.cache.find(u => u.user.tag === args[0]);
+exports.run = async (bot, message, args) => {
+    const member = message.mentions.members.get(args[0]) ||
+    message.guild.members.cache.find(u => u.user.id === args[0]);
 
-    Profile.findOne({ userID: user.user.id }, async (err, files) => {
-        if (err) console.error(err);
+    const moneyToAdd = args[1];
+    if (!isNumber(moneyToAdd)) return;
 
-        await bot.updateProfile(user.user, { coins: files.coins + parseInt(args[1]) });
-    });
-
-    message.channel.send(`Foram adicionados ${args[1]} reais na conta do ${user.user.tag}.`);
+    await bot.updateCoins(member, moneyToAdd, true);
+    message.channel.send(`Foram adicionados ${moneyToAdd} reais na conta do ${member.user.tag}.`);
 };
 
 exports.command = {
-    aliases: ['addcash', 'givemoney', 'add-cash', 'give-money'],
+    aliases: ['addcash', 'givemoney', 'add-cash', 'give-money', 'add-money'],
     description: "Adiciona uma quantidade de reais a um usuário.",
     usage: "addmoney <usuário> <quantidade>",
     commandPermissions: ['DEVELOPER'],

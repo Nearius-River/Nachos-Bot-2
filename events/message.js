@@ -1,55 +1,40 @@
-module.exports = async (bot, message) => {
-    if (message.author.bot || message.channel.type == 'dm') return; /////////////' If message author is a bot or message is in a DM channel, return nothing '//
+const chalk = require("chalk");
 
-	let settings;
+module.exports = async (bot, message) => {
+    if (message.author.bot || message.channel.type == 'dm') return;
+    //' If message author is a bot or message is in a DM channel, return nothing '//
+    //# Before prefix check #//
+
+    let settings;
     try {
         settings = await bot.getGuild(message.guild);
+        //' Main bot settings for guild (prefix, log channel etc) '//
     } catch (e) {
-        console.error(e);
-    } //' Main bot settings for guild (prefix, log channel etc) '//
+        return;
+    }
 
-    const prefix = settings.prefix;
+    if (settings == undefined) {
+        return message.channel.send('Ajustando as configurações para a guilda... Você já deve poder usar comandos agora.');
+    }
 
-    const newProfile = {
-        userID: message.author.id,
-        userWarnings: {
-            warningsTotal: 0,
-            warningsDetail: [],
-        },
-        isBlacklisted: false,
-    };
+    const prefix = settings.prefix || '*';
+    if (message.content.startsWith(`<@!${bot.user.id}>`)) message.channel.send(`Querendo ajuda? meu prefixo nesse servidor é \`${prefix}\`.\nCaso queira ver uma lista de comandos, digite \`${prefix}comandos\` ou \`${prefix}cmds\`.`);
+    //' Make the bot reply with useful info if message starts with bot mention '//
 
-    const userProfile = await bot.getProfile(message.author);
-    if (!userProfile) return await bot.createProfile(newProfile);
+    const memberProfile = await bot.getMemberProfile(message.member);
+    const userProfile = await bot.getUserProfile(message.member);
+    if (!memberProfile || !userProfile) return message.member.send('Criando seu perfil para "' + message.guild.name + '". Você já deve poder usar comandos agora.');
 
+    updateCoinsAndExperience(bot, message);
+
+    //' Consider changing to bot database later '//
     bot.owners = ['303235142283952128','630456490540400703','693676638373937182']; //' Setting bot owners id '//
     bot.mainServer = bot.guilds.cache.get('538548215914561537'); //' Development server '//
     bot.mainLogChannel = bot.mainServer.channels.cache.get('686761678247165955'); //' Channel for bot-related logs '//
 
-    if (message.content.indexOf(settings.prefix) !== 0) return; //' If message don't starts with the prefix, return nothing '//
+    //# Prefix check #//
+    if (message.content.indexOf(settings.prefix) !== 0) return;
     let args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
-
-    function getGuildValue(valueToReturn, argsValue) {
-        if (valueToReturn == 'member') {
-            let member =
-            message.mentions.members.first() ||
-            message.guild.members.cache.find(m => m.id == argsValue) ||
-            message.guild.members.cache.find(m => m.user.username.includes(argsValue));
-
-            if (!member || member == undefined) { member = message.member; }
-            return member;
-        } else if (valueToReturn == 'role') {
-            let role =
-            message.mentions.roles.first() ||
-            message.guild.roles.cache.find(r => r.name.includes(role)) ||
-            message.guild.roles.cache.find(r => r.id == role);
-
-            if (!role || role == undefined) { return message.channel.send('Cargo não encontrado.'); }
-            return role;
-        } else {
-            return console.log('MESSAGE | Valor para retornar inválido.');
-        }
-    }
 
     let commandName = args.shift().toLowerCase();
     let cmd;
@@ -61,28 +46,42 @@ module.exports = async (bot, message) => {
         return;
     }
 
-    if (cmd.command.disabled == true && bot.owners.includes(message.author)) return message.channel.send('Opa, foi mal! Esse comando foi desativado pelo desenvolvedor!'); //' If 'exports.command.disabled' is set to true on any command, don't execute the command and return nothing '//
-    if (userProfile ? userProfile.isBlacklisted : true) return; //' If message author is blacklisted, return nothing '//
+    if (cmd.command.disabled == true && !bot.memberIs(message.member, 'developer')) return message.channel.send('Opa, foi mal! Este comando está em manutenção!');
+    //' If 'exports.command.disabled' is set to true on a command,
+    //' don't execute the command and return something
+    if (cmd.command.commandPermissions.length > 0 ) {
+        let permissions = cmd.command.commandPermissions;
+        if (permissions.includes('OWNER') && !await bot.memberIs(message.member, 'owner')) return message.channel.send('Hmm... Parece que você não pode usar isso.');
+        else if (permissions.includes('DEVELOPER') && !await bot.memberIs(message.member, 'developer')) return message.channel.send('Hmm... Parece que você não pode usar isso.');
+
+        if (!permissions.includes('OWNER') && !permissions.includes('DEVELOPER') && !message.member.permissions.has(permissions)) {
+            return message.channel.send('Parece que você não pode usar isso. Tenha certeza de ter as seguintes permissões: `' + permissions.join(', ') + '`.');
+        }
+    }
+    //' Permission checking '//
+    if (userProfile.botBlacklist == true && !await bot.memberIs(message.member, 'developer')) return;
+    //' If message author is blacklisted, return nothing '//
 
     try {
-        cmd.run(bot, message, args, settings, getGuildValue); //' Executes the command '//
+        cmd.run(bot, message, args, settings); //' Executes the command '//
         bot.increaseCommandCount();
-		bot.updateLog('Comando usado -> ' + commandName + ', usado por ' + message.member.nickname);
     } catch (e) {
-        message.channel.send('Um eggrro ocorreu:\n' + '```js' + e + '```');
-        return;
+        return message.channel.send('Um eggrro ocorreu:\n' + '```js' + e + '```');
+    }
+};
+
+async function updateCoinsAndExperience(bot, message) {
+    const moneyIncreaseChance = Math.floor(Math.random() * 16) + 1;
+    const amountMoney = Math.floor(Math.random() * 4) + 1;
+    const amountExperience = Math.floor(Math.random() * 20) + 5;
+
+    if (moneyIncreaseChance >= 2 && moneyIncreaseChance <= 10) {
+        try {
+            await bot.updateCoins(message.member, amountMoney);
+        } catch (e) {
+            console.error(chalk.red(`PERFIL > USUÁRIO | Ocorreu um erro ao tentar atualizar os valores de "${message.author.id}".\n`) + chalk.cyan(`${e}`));
+        }
     }
 
-    if (message.content.startsWith(`<@!${bot.user.id}>`)) message.channel.send(`Querendo ajuda? meu prefixo nesse servidor é \`${prefix}\`.\nCaso queira ver uma lista de comandos, digite \`${prefix}comandos\` ou \`${prefix}cmds\`.`); //' Make the bot reply with useful info if message starts with bot mention '//
-
-    const messageCheck = Math.floor(Math.random() * 10) + 1;
-    const amount = Math.floor(Math.random() * 4) + 1;
-
-    if (messageCheck >= 2 && messageCheck <= 8) {
-        try {
-            await bot.updateCoins(bot, message.member, amount);
-        } catch (e) {
-            console.error(`PERFIL > USUÁRIO | Ocorreu um erro ao tentar atualizar os valores de "${message.author.id}".\n`.error + `${e}`.warn);
-        }
-    } //' If messageCheck is equals or greater than 2 and equals or less than 3, call function #updateCoins '//
-};
+    await bot.updateExperience(message.member, amountExperience);
+}

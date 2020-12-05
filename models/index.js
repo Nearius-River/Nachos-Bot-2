@@ -1,5 +1,6 @@
 module.exports = {
-    Guild: require('./guild'),
-    Profile: require('./profile'),
-    Bot: require('./bot')
+    Guild: require('./guild-profile'),
+    MemberProfile: require('./member-profile'),
+    UserProfile: require('./user-profile'),
+    Bot: require('./bot-profile')
 };

@@ -1,12 +1,5 @@
-exports.run = async (bot, message, args, settings, getGuildValue) => {
-    let member = getGuildValue('member', args.join(' '));
-    bot.memberIs(member, 'owner').then(result => {
-        if (result == true) {
-            message.channel.send('É admin');
-        } else {
-            message.channel.send('Não é admin');
-        }
-    });
+exports.run = async (bot, message, args, settings) => {
+    console.log('Nada a ser executado.');
 };
 
 exports.command = {

@@ -20,13 +20,13 @@ exports.run = async (bot, message, args) => {
                 case '😎':
                     msg.reactions.removeAll();
                     msg.edit(`Beleza, ${user.user.tag} é agora um desenvolvedor!`);
-                    bot.updateProfile(user.user, { isDeveloper: true });
+                    bot.updateMemberProfile(user.user, { isDeveloper: true });
                     bot.updateLog(`Novo desenvolvedor adicionado: ${user.id}`);
                     break;
                 case '✌️':
                     msg.reactions.removeAll();
                     msg.edit(`Beleza, ${user.user.tag} foi removido dos desenvolvedores.`);
-                    bot.updateProfile(user.user, { isDeveloper: false });
+                    bot.updateMemberProfile(user.user, { isDeveloper: false });
                     bot.updatelog(`Desenvolvedor removido: ${user.id}`);
                     break;
                 case '😐':

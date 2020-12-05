@@ -2,17 +2,17 @@ const Discord = require('discord.js');
 
 exports.run = async (bot, message, args) => {
     let embed = new Discord.MessageEmbed();
-    const commandName = args[0];
+    let commandName = args[0];
     const realCommand = bot.commands.get(commandName) || bot.commands.find(c => c.command.aliases.some(word => word === commandName));
 
     if (commandName == 'ajuda' || commandName == 'help' || !realCommand) return message.channel.send(`Para obter ajuda em um comando, use \`ajuda <comando>\` **Exemplo:** ajuda mute\nPara uma lista de comandos, use **comandos**\nCaso tenha encontrado algum erro, contate Near#8072 ou use o comando \`bugreport\`.`);
 
     const commandDescription = realCommand.command.description;
     const commandCategory = realCommand.command.commandCategory;
-    let commandUsage = realCommand.command.usage;
     const commandAliases = realCommand.command.aliases;
 
     //# This thing won't work unless I do this #//
+    let commandUsage = realCommand.command.usage;
     commandUsage = commandUsage.replace('<', '`<');
     commandUsage = commandUsage.replace('>', '>`');
     commandUsage = commandUsage.replace('[', '`[');

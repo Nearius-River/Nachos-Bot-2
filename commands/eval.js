@@ -18,7 +18,7 @@ exports.run = async (bot, message, args) => {
 
         message.delete();
         embed.setTitle('Executado com sucesso!');
-        embed.setDescription(`Entrada:\n\`\`\`${message.content}\`\`\`\nSaida:\n\`\`\`js\n${bot.clean(evaled)}\n\`\`\``);
+        embed.setDescription(`Entrada:\n\`\`\`${message.content}\`\`\`\nSaida:\n\`\`\`js\n${bot.cleanText(evaled)}\n\`\`\``);
         message.channel.send(embed).then(async msg => {
             await msg.react('❌');
 
@@ -37,7 +37,7 @@ exports.run = async (bot, message, args) => {
       } catch (err) {
 		message.delete();
 		embed.setTitle('Oops, um erro ocorreu!');
-		embed.setDescription(`Entrada:\n\`\`\`${message.content}\`\`\`\nErro:\n\`\`\`js\n${bot.clean(err)}\n\`\`\``);
+		embed.setDescription(`Entrada:\n\`\`\`${message.content}\`\`\`\nErro:\n\`\`\`js\n${bot.cleanText(err)}\n\`\`\``);
         return message.channel.send(embed).then(async msg => {
             await msg.react('❌');
 

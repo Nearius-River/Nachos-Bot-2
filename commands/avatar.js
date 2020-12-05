@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 
-exports.run = async (bot, message, args, settings, member) => {
+exports.run = async (bot, message, args, settings) => {
+    let member = message.mentions.members.first() || message.guild.members.cache.find(u => u.user.id === args[0]) || message.guild.members.cache.find(u => u.user.username === args[0]) || message.guild.members.cache.find(u => u.user.tag === args[0]);
     let embed = new Discord.MessageEmbed().setColor(message.guild.me.displayColor).setTitle(member.user.tag);
 
     if (member.user.displayAvatarURL().endsWith('?size=2048')) {
@@ -14,7 +15,7 @@ exports.run = async (bot, message, args, settings, member) => {
 };
 
 exports.command = {
-    aliases: ['av', 'avatar'],
+    aliases: ['av'],
     description: "Visualiza o avatar completo de um usuário.",
     usage: "avatar [usuário] | avatar Near",
     commandPermissions: [],

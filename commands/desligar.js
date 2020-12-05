@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const chalk = require('chalk');
 const moment = require('moment');
 moment.locale('pt-br');
 
@@ -23,7 +24,7 @@ exports.run = (bot, message, args) => {
         case '👋':
           msg.reactions.removeAll();
           msg.edit(`Conexão encerrada. ${replies[result]}`);
-          console.log('BOT | Bot desligado.'.warn);
+          console.log(chalk.cyan('BOT | Bot desligado.'));
           bot.updateLog(`—————————— Fim dos logs ——————————— | ${moment(Date.now()).format('lll')} | —————`);
           bot.mongoose.end();
 		  bot.setTimeout(function() {

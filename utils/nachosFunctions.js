@@ -1,7 +1,8 @@
+const chalk = require('chalk');
 const moment = require('moment');
 moment.locale('pt-br');
 const mongoose = require('mongoose');
-const { Guild, Profile, Bot } = require('../models');
+const { Guild, MemberProfile, UserProfile, Bot } = require('../models');
 const messages = {
     fail: {
         guildNotAvailable: 'Fail | Guild is not available',
@@ -30,9 +31,13 @@ module.exports = bot => {
     //: Guild Profile ://
     //---------------->//
     bot.getGuild = async guild => {
-        let data = await Guild.findOne({ guildID: guild.id });
+        let data = await Guild.findOne({ _id: guild.id });
         if (data) return data;
-        else return bot.defaults.mainGuildSettings;
+        else {
+            await bot.createGuild({ _id: guild.id }).then(data => {
+                return data;
+            });
+        }
     };
 
     bot.updateGuild = async (guild, settings) => {
@@ -44,116 +49,178 @@ module.exports = bot => {
             else return;
         }
 
-        console.log(`PERFIL > GUILD | Servidor "${data.guildID}" atualizou as configurações: ${Object.keys(settings)}`.updated);
+        console.log(chalk.green(`PERFIL > GUILD | Servidor "${data._id}" atualizou as configurações: ${Object.keys(settings)}`));
         return await data.updateOne(settings);
     };
 
     bot.createGuild = async settings => {
-        let defaults = Object.assign({ _id: mongoose.Types.ObjectId() }, bot.defaults.mainGuildSettings);
+        let defaults = Object.assign(bot.defaults.mainGuildSettings);
         let merged = Object.assign(defaults, settings);
 
-        const newGuild = await new Guild(merged);
-        await bot.updateLog(`Novo perfil de guild criado para \`\`${merged.guildID}\`\`.`);
-        return newGuild.save().then(console.log(`PERFIL > GUILD | Configurações padrões salvas para "${merged.guildID}"`.updated));
-    };
-
-    bot.deleteGuild = async guild => {
-        if (!guild || !bot.getGuild(guild)) return console.error(`GUILD | Falha ao deletar uma guild da DB. A guild não existe ou ID fornecido estava incorreto.`.error);
-        if (typeof(guild) === 'string')  {
-            await Guild.deleteOne({ guildID: guild });
-            await bot.updateLog(`Uma guild foi excluida da DB. ID: ${guild}`);
-            return console.log(`PERFIL > GUILD | Guild ${guild} excluida da DB com sucesso!`.updated);
-        } else {
-            await Guild.deleteOne({ guildID: guild.id });
-            await bot.updateLog(`Uma guild foi excluida da DB. ID: ${guild.id}`);
-            return console.log(`PERFIL > GUILD | Guild ${guild.id} excluida da DB com sucesso!`.updated);
-        }
-    };
-    //<---------------//
-    //: User Profile ://
-    //--------------->//
-    bot.createProfile = async profile => {
-        const merged = Object.assign({ _id: mongoose.Types.ObjectId() }, profile);
-
         try {
-            const newProfile = await new Profile(merged);
-            return newProfile.save().then(console.log(`PERFIL > USUÁRIO | Novo perfil salvo para "${merged.userID}", na guild "${merged.guildID}"`.updated));
+            const newGuild = await new Guild(merged);
+            bot.updateLog(`PERFIL > GUILD | Novo perfil de guild criado para \`\`${merged._id}\`\`.`);
+            return newGuild.save().then(console.log(chalk.green(`PERFIL > GUILD | Configurações padrões salvas para "${merged._id}"`)));
         } catch (e) {
-            return console.error(`PERFIL > USUÁRIO | Não foi possivel criar um perfil de usuário.\n`.err + `${e}`.warn);
+            return console.error(chalk.red(`PERFIL > GUILD | Não foi possivel criar um perfil de guild.\n`) + chalk.cyan(`${e}`));
         }
     };
-
-    bot.getProfile = async (user, extraData) => {
-        const data = await Profile.findOne({ userID: user.id });
-        if (extraData) {
-            if (typeof(extraData) != 'boolean') return;
-            Profile.findOne({ userID: user.id }).then(async result => {
-                return console.log(result);
-            });
-        }
+    //<-----------------------//
+    //: Guild Member Profile ://
+    //----------------------->//
+    bot.getMemberProfile = async member => {
+        const data = await MemberProfile.findOne({ userID: member.id, guildID: member.guild.id });
         if (data) return data;
         else {
-            bot.createProfile({ userID: user.id, userWarnings: { warningsTotal: 0, warningsDetail: [], }, isBlacklisted: false });
+            await bot.createMemberProfile({ userID: member.id, guildID: member.guild.id}).then(async function() {
+                return await MemberProfile.findOne({ userID: member.id, guildID: member.guild.id });
+            });
         }
     };
 
-    bot.updateProfile = async (user, data) => {
-        let profile = await bot.getProfile(user);
+    bot.createMemberProfile = async profile => {
+        if (profile.guildID == undefined) return;
+        const merged = Object.assign({ _id: mongoose.Types.ObjectId() }, profile);
+        try {
+            const newProfile = await new MemberProfile(merged);
+            return newProfile.save().then(console.log(`PERFIL > MEMBRO | Novo perfil de membro salvo para "${merged.userID}", na guild "${merged.guildID}"`.updated));
+        } catch (e) {
+            return console.error(chalk.red(`PERFIL > MEMBRO | Não foi possivel criar um perfil de membro.\n`) + chalk.cyan(`${e}`));
+        }
+    };
+
+    bot.updateMemberProfile = async (member, newData) => {
+        let profile = await bot.getMemberProfile(member);
 
         if (typeof profile !== 'object') profile = {};
-        for (const key in data) {
-            if (profile[key] !== data[key]) profile[key] = data[key];
-            else return;
+        for (const key in newData) {
+            if (profile[key] !== newData[key]) profile[key] = newData[key];
+            else continue;
+        }
+
+        return await profile.updateOne(profile);
+    };
+    //<-------------------//
+    //: Bot User Profile ://
+    //------------------->//
+    bot.getUserProfile = async member => {
+        const data = await UserProfile.findById(member.id);
+
+        if (data) return data;
+        else {
+            try {
+                await bot.createUserProfile({ _id: member.id }).then(async function() {
+                    return await UserProfile.findOne({
+                        _id: member.id
+                    });
+                });
+            } catch (e) {
+                return;
+            }
+
+        }
+    };
+
+    bot.createUserProfile = async profile => {
+        try {
+            const newProfile = await new UserProfile(profile);
+            newProfile.save().then(async function() {
+                console.log(chalk.green(`PERFIL > USUÁRIO | Novo perfil de usuário criado para "${profile._id}"`));
+                return await UserProfile.findById(profile._id);
+            });
+        } catch (e) {
+            return console.error(chalk.red(`PERFIL > USUÁRIO | Não foi possivel criar um perfil de usuário.\n`) + chalk.cyan(`${e}`));
+        }
+    };
+
+    bot.updateUserProfile = async (member, newData) => {
+        let profile = await bot.getUserProfile(member);
+
+        if (typeof profile !== 'object') profile = {};
+        for (const key in newData) {
+            if (profile[key] !== newData[key]) profile[key] = newData[key];
+            else continue;
         }
 
         return await profile.updateOne(profile);
     };
 
-    bot.deleteProfile = async user => {
-        if (!user || !bot.getProfile(user)) return console.error(`PERFIL | Falha ao deletar um perfil da DB. Perfil não existe ou ID fornecido estava incorreto.`.error);
+    bot.updateCoins = async (member, amount, noExtra) => {
+        const profile = await bot.getUserProfile(member);
 
-        if (typeof(user) === 'string')  {
-            await Profile.deleteOne({ userID: user });
-            await bot.updateLog(`Um perfil de usuário foi excluido da DB. ID: ${user}`);
-            return console.log(`PERFIL > USUÁRIO | Perfil ${user} excluido da DB com sucesso!`.updated);
-        } else {
-            await Profile.deleteOne({ guildID: user.id });
-            await bot.updateLog(`Um perfil de usuário foi excluido da DB. ID: ${user.id}`);
-            return console.log(`PERFIL > USUÁRIO | Perfil ${user.id} excluido da DB com sucesso!`.updated);
-        }
+        const newAmount = profile ? profile.economy.coins + (amount) : amount;
+        let extra;
+
+        let chance = Math.random(1, 10);
+        if (chance <= 4) extra = 0;
+        else if (chance >= 5) extra = Math.random(1, 4);
+        if (noExtra == true) extra = 0;
+
+        return await bot.updateUserProfile(member, { economy: { coins: newAmount + extra } });
     };
 
-    bot.updateCoins = async (bot, member, amount) => {
-        const profile = await bot.getProfile(member);
-        const newAmount = profile ? profile.coins + amount : amount;
-        await bot.updateProfile(member, { coins: newAmount, experience: newAmount + 2, experienceTotal: newAmount + 2 }); ///////////////' #botFunctions :updateProfile '//
-        if (profile.experience >= profile.toNextLevel) {
-            await bot.updateProfile(member, { level: profile.level += 1, experience: profile.experience - profile.toNextLevel, toNextLevel: Math.floor((profile.toNextLevel + 35)) });
-            console.log(`LEVEL | Membro ${profile.userID} passou para o nível ${profile.level}! A próxima meta é ${profile.toNextLevel}.`.warn);
+    let expCooldown = false;
+    const cooldownTime = 60;
+    bot.updateExperience = async (member, amount) => {
+        if (expCooldown == false) {
+            expCooldown = true;
+            const profile = await bot.getUserProfile(member);
+            const newAmount = profile ? profile.profile.experience + amount : amount;
+
+            await bot.updateUserProfile(member, {
+                profile: {
+                    level: profile.profile.level,
+                    experience: newAmount,
+                    experienceTotal: newAmount,
+                    toNextLevel: profile.profile.toNextLevel
+
+                }
+            });
+
+            if (profile.profile.experience >= profile.profile.toNextLevel) {
+                await bot.updateUserProfile(member, {
+                    profile: {
+                        level: profile.profile.level++,
+                        experience: profile.profile.experience - profile.profile.toNextLevel,
+                        toNextLevel: Math.floor((profile.profile.toNextLevel + 35 + ((profile.profile.level * 4) + 100)))
+                    }
+                });
+                return console.log(chalk.cyan(`LEVEL | Usuário ${profile.userID} passou para o nível ${profile.profile.level}! A próxima meta é ${profile.profile.toNextLevel}.`));
+            }
+            return true;
+        } else {
+            setTimeout(function() {
+                expCooldown = false;
+            }, cooldownTime * 1e3);
+            return expCooldown;
         }
     };
     //<-------//
     //: Logs ://
     //------->//
     let lastMessage;
-    bot.makeLog = async logString => {
+    bot.makeLog = logString => {
         const disabled = true;
         if (disabled == true) return; //temporary
         if (!logString || logString.length < 1) {
-            console.error(`LOG | Falha ao postar um novo log. Mensagem para postar estava vazia.`.error);
+            console.error(chalk.red(`LOG | Falha ao postar um novo log. Mensagem para postar estava vazia.`));
             return messages.fail.logStringEmpty;
         }
         if (!bot.mainLogChannel.deleted) {
-            bot.mainLogChannel.send(logString + ` [${moment(Date.now()).format('LT')}]`);
-            console.log(`LOG | Uma nova log foi postada com sucesso! ID: ${lastMessage.id}`.warn);
-            return messages.success.logSended;
+            try {
+                bot.mainLogChannel.send(logString + ` [${moment(Date.now()).format('LT')}]`);
+                return messages.success.logSended;
+            } catch (e) {
+                console.error(chalk.red(`LOG | Falha ao postar um novo log.`) + chalk.cyan(`\n${e}`));
+                return false;
+            }
         } else {
-            console.error(`LOG | Falha ao postar um novo log. O canal especificado não existe.`.error);
+            console.error(chalk.red(`LOG | Falha ao postar um novo log. O canal especificado não existe.`));
             return messages.fail.channelDontExist;
         }
     };
 
-    bot.updateLog = async (logString, supressDateStamp) => {
+    bot.updateLog = (logString, supressDateStamp) => {
         const disabled = true;
         if (disabled == true) return; //temporary
         if (bot.mainLogChannel) {
@@ -163,18 +230,18 @@ module.exports = bot => {
         }
 
         if (!logString || logString.length < 1) {
-            console.error(`LOG | Falha ao editar um log. Mensagem para postar estava vazia.`.error);
+            console.error(chalk.red(`LOG | Falha ao editar um log. Mensagem para postar estava vazia.`));
             return messages.fail.logStringEmpty;
         }
 
         if (logString.length > 1000) {
-            console.error(`LOG | Falha ao editar um log. Mensagem para postar ultrapassou o limite de caractéres.`.error);
+            console.error(chalk.red(`LOG | Falha ao editar um log. Mensagem para postar ultrapassou o limite de caractéres.`));
             return messages.fail.characterLimit;
         }
 
         if (!lastMessage) {
-            console.error(`LOG | Falha ao editar um log. Não existem logs para editar.`.error);
-            return messages.fail.messageDontExist;
+            bot.makeLog(logString);
+            return messages.success.logSended;
         } else {
             if (lastMessage.length > 1000) {
                 console.warn(`LOG | Log ${lastMessage.id} ultrapassou 1000 caractéres, postando um novo log...`);
@@ -193,61 +260,38 @@ module.exports = bot => {
     //<-------//
     //: Util ://
     //------->//
-    bot.guildAvailable = guild => {
-        if (!guild || guild == undefined) {
-            console.error(`GUILD | Falha ao obter a disponibilidade de uma guild. Guild fornecida não existe ou não pode ser encontrada.`.error);
-            return messages.fail.guildDontExist;
-        }
-        const available = guild.available;
-        if (!available) return false;
-        else return true;
+    bot.getBotProfile = async () => {
+        let data = await Bot.findById(bot.user.id);
+        if (data) return data;
+        else return undefined;
     };
 
     bot.memberIs = async (member, typeOfStatus) => {
-        typeOfStatus = typeOfStatus.toLowerCase();
-        let userID = member.user.id;
+        let userID = member.id;
         let profile = await bot.getBotProfile();
 
-        switch (typeOfStatus) {
+        switch (typeOfStatus.toLowerCase()) {
             case 'owner':
-                if (profile.owners.includes(userID)) return true;
-                else return false;
+            if (profile.owners.includes(userID)) return true;
+            else return false;
             case 'developer':
-                if (profile.owners.includes(userID)) return true;
-                if (profile.devs.includes(userID)) return true;
-                else return false;
-        }
-    };
-
-    bot.getBotProfile = async () => {
-        let data = await Bot.findOne({ _id: mongoose.Types.ObjectId('5f08b4497586a91384c1e434') });
-        if (data) return data;
-        else {
-            try {
-                const newProfile = await new Bot({
-                    _id: mongoose.Types.ObjectId(),
-                    commandUsageCount: 0,
-                    changelogs: [],
-                    owners: ['303235142283952128', '630456490540400703'],
-                    devs: [],
-                });
-                await newProfile.save().then(result => { return result; });
-            } catch (e) {
-                console.error(`PERFIL > BOT | Falha ao tentar criar o perfil do bot.`.error + `\n${e}`.warn);
-            }
+            if (profile.owners.includes(userID)) return true;
+            if (profile.devs.includes(userID)) return true;
+            else return false;
+            default:
+            return false;
         }
     };
 
     bot.newChangelog = async changelogString => {
         if (!changelogString || typeof(changelogString) !== 'string' || changelogString.length < 1) {
-            console.error(`PERFIL > BOT | Falha ao adicionar um changelog à DB. Texto fornecido estava incorreto.`.error);
+            console.error(chalk.red(`PERFIL > BOT | Falha ao adicionar um changelog à DB. Texto fornecido estava incorreto.`));
             return messages.fail.textIncorrect;
         }
 
         const profile = await bot.getBotProfile();
         await profile.changelogs.push(moment(Date.now()).format('ll') + ' às ' + moment(Date.now()).format('LT') + `\n${changelogString}`);
-        console.log(`PERFIL > BOT | Sucesso ao adicionar um changelog à DB!`.ready);
-        return true;
+        return messages.success.changelogAdded;
     };
 
     bot.getChangelog = async numberOptional => {
@@ -255,27 +299,25 @@ module.exports = bot => {
         const changelogs = profile.changelogs;
 
         if (changelogs.length < 1) {
-            console.log(`PERFIL > BOT | Falha ao obter os changelogs. Tenha certeza que a array não está vazio.`.error);
+            console.error(chalk.red(`PERFIL > BOT | Falha ao obter os changelogs. Tenha certeza que a array não está vazio.`));
             return messages.fail.arrayEmpty;
         }
 
         switch (numberOptional) {
             case typeof(numStringOptional) == 'number':
-                if (!changelogs[numberOptional]) {
-                    console.log(`PERFIL > BOT | Falha ao obter os changelogs. Tenha certeza que forneceu um valor no alcance.`);
-                    return messages.fail.arrayOutOfRange;
-                } else {
-                    console.log(`PERFIL > BOT | Sucesso ao obter um changelog!`);
-                    return changelogs[numberOptional];
-                }
+            if (!changelogs[numberOptional]) {
+                console.error(chalk.red(`PERFIL > BOT | Falha ao obter os changelogs. Valor fornecido fora de alcance.`));
+                return messages.fail.arrayOutOfRange;
+            } else {
+                return changelogs[numberOptional];
+            }
             default:
-                if (!changelogs[changelogs.length]) {
-                    console.log(`PERFIL > BOT | Falha ao obter os changelogs. Tenha certeza que existem valores definidos.`);
-                    return messages.fail.arrayEmpty;
-                } else {
-                    console.log(`PERFIL > BOT | Sucesso ao obter um changelog!`);
-                    return changelogs[changelogs.length];
-                }
+            if (!changelogs[changelogs.length]) {
+                console.error(chalk.red(`PERFIL > BOT | Falha ao obter os changelogs. Tenha certeza que existe algo na array.`));
+                return messages.fail.arrayEmpty;
+            } else {
+                return changelogs[changelogs.length];
+            }
         }
     };
 
@@ -284,11 +326,12 @@ module.exports = bot => {
         return await profile.updateOne({ commandUsageCount: profile.commandUsageCount + 1 });
     };
 
-    bot.updateActivity = async (text,activityTypeOptional) => {
+    bot.updateActivity = (text,activityTypeOptional) => {
         if (!text || typeof(text) !== 'string' || text.length < 1) {
-            console.error(`BOT > ATIVIDADE | Falha ao atualizar a atividade do bot. Texto fornecido estava incorreto.`.error);
+            console.error(chalk.red(`BOT > ATIVIDADE | Falha ao atualizar a atividade do bot. Texto fornecido estava incorreto.`));
             return messages.fail.textIncorrect;
         }
+
         switch (activityTypeOptional) {
             case 1:
             bot.user.setActivity(text, { type: 'PLAYING' });
@@ -320,15 +363,15 @@ module.exports = bot => {
                     guilds.push(guild);
                 }
             });
-            if (serverCount <= 1) return 'Esse usuário não tem nenhum servidor em comum.';
+            if (serverCount < 1) return 'Esse usuário não tem nenhum servidor em comum.';
             return guilds;
         } catch (e) {
-            console.error(`USUÁRIO | Ocorreu um erro ao tentar obter os servidores em comum com "${member.id}".`.error + `\n${e}`.warn);
+            console.error(chalk.red(`USUÁRIO | Ocorreu um erro ao tentar obter os servidores em comum com "${member.id}".`) + chalk.cyan(`\n${e}`));
             return messages.fail.userDontExist;
         }
     };
 
-    bot.clean = text => {
+    bot.cleanText = text => {
         if (typeof(text) === "string") {
             return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
         } else {

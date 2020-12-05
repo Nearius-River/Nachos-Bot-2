@@ -60,7 +60,7 @@ exports.run = async (bot, message, args, settings) => {
     .addField("Canal", message.channel)
     .setTimestamp();
 
-    let logChannel = message.guild.channels.cache.find(c => c.id === settings.logsChannel);
+    let logChannel = message.guild.channels.cache.find(c => c.id === settings.channels.logChannel);
     if (!logChannel) return;
     logChannel.send(logEmbed);
 };
