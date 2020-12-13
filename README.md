@@ -1,1 +1,1 @@
-A quarta versão do meu projeto de bot para o Discord, conhecido como "Nachos Bot".
+Não ligue se você ver commits não relacionados a nada, eu ainda estou aprendendo a usar o Git e acabei cometendo alguns enganos.
